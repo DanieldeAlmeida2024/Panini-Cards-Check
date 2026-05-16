@@ -45,6 +45,56 @@ type CollectionState = Record<string, number>;
 
 const STORAGE_KEY = "panini-world-cup-2026-collection-v1";
 const app = document.querySelector<HTMLDivElement>("#app");
+const FLAG_CODES: Record<string, string> = {
+  MEX: "mx",
+  RSA: "za",
+  KOR: "kr",
+  CZE: "cz",
+  CAN: "ca",
+  BIH: "ba",
+  QAT: "qa",
+  SUI: "ch",
+  BRA: "br",
+  MAR: "ma",
+  HAI: "ht",
+  SCO: "gb-sct",
+  USA: "us",
+  PAR: "py",
+  AUS: "au",
+  TUR: "tr",
+  GER: "de",
+  CUW: "cw",
+  CIV: "ci",
+  ECU: "ec",
+  NED: "nl",
+  JPN: "jp",
+  SWE: "se",
+  TUN: "tn",
+  BEL: "be",
+  EGY: "eg",
+  IRN: "ir",
+  NZL: "nz",
+  ESP: "es",
+  CPV: "cv",
+  KSA: "sa",
+  URU: "uy",
+  FRA: "fr",
+  SEN: "sn",
+  IRQ: "iq",
+  NOR: "no",
+  ARG: "ar",
+  ALG: "dz",
+  AUT: "at",
+  JOR: "jo",
+  POR: "pt",
+  COD: "cd",
+  UZB: "uz",
+  COL: "co",
+  ENG: "gb-eng",
+  CRO: "hr",
+  GHA: "gh",
+  PAN: "pa",
+};
 
 if (!app) {
   throw new Error("Elemento #app nao encontrado.");
@@ -81,6 +131,8 @@ const formatClub = (club?: Club) => {
   if (!club || club.name === "UNKNOWN") return "Clube indisponivel";
   return club.name;
 };
+
+const flagUrl = (code: string) => `https://flagcdn.com/${FLAG_CODES[code] ?? code.toLowerCase()}.svg`;
 
 const readCollection = (): CollectionState => {
   try {
@@ -184,7 +236,8 @@ const render = (data: AlbumData, collection: CollectionState) => {
   const countriesById = new Map(data.countries.map((country) => [country.id, country]));
   const playersById = new Map(data.players.map((player) => [player.id, player]));
   const clubsById = new Map(data.clubs.map((club) => [club.id, club]));
-  const countrySelect = document.querySelector<HTMLSelectElement>("#countryFilter");
+  const shell = document.querySelector<HTMLElement>(".shell");
+  const countryCards = document.querySelector<HTMLDivElement>("#countryCards");
   const searchInput = document.querySelector<HTMLInputElement>("#searchInput");
   const grid = document.querySelector<HTMLDivElement>("#stickerGrid");
   const empty = document.querySelector<HTMLParagraphElement>("#emptyState");
@@ -194,11 +247,11 @@ const render = (data: AlbumData, collection: CollectionState) => {
   const totalRepeats = document.querySelector<HTMLDivElement>("#totalRepeats");
   const missingList = document.querySelector<HTMLDivElement>("#missingList");
   const missingCount = document.querySelector<HTMLSpanElement>("#missingCount");
-  const selectedCountryId = Number(countrySelect?.value || data.countries[0]?.id);
+  const selectedCountryId = Number(shell?.dataset.countryId || data.countries[0]?.id);
   const query = normalize(searchInput?.value ?? "");
   const selectedCountry = countriesById.get(selectedCountryId) ?? data.countries[0];
 
-  if (!grid || !empty || !progress || !selectedCountry || !missingList || !missingCount) return;
+  if (!grid || !empty || !progress || !selectedCountry || !missingList || !missingCount || !countryCards) return;
 
   const countryStickers = data.stickers
     .filter((sticker) => sticker.countryId === selectedCountry.id)
@@ -228,6 +281,24 @@ const render = (data: AlbumData, collection: CollectionState) => {
   if (totalMissing) totalMissing.textContent = String(missingStickers.length);
   if (totalRepeats) totalRepeats.textContent = String(repeatsTotal);
   grid.innerHTML = "";
+  countryCards.innerHTML = data.countries
+    .map((country) => {
+      const selected = country.id === selectedCountry.id;
+      return `
+        <button
+          class="country-card ${selected ? "is-active" : ""}"
+          type="button"
+          data-country-id="${country.id}"
+          style="--flag-url: url('${flagUrl(country.code)}')"
+          aria-pressed="${selected}"
+        >
+          <span class="country-group">Grupo ${escapeHtml(country.group)}</span>
+          <span class="country-name">${escapeHtml(country.namePt)}</span>
+          <strong>${escapeHtml(country.code)}</strong>
+        </button>
+      `;
+    })
+    .join("");
   empty.hidden = visibleStickers.length > 0;
   missingCount.textContent = String(missingStickers.length);
 
@@ -277,7 +348,7 @@ const init = async () => {
       <header class="app-header">
         <div>
           <p class="eyebrow">Panini World Cup 2026</p>
-          <h1>Meu album</h1>
+          <h1>Album Copa do Mundo - 2026</h1>
         </div>
         <div class="summary-pill" id="progressText">Carregando...</div>
       </header>
@@ -299,13 +370,19 @@ const init = async () => {
 
       <section class="controls" aria-label="Filtros do album">
         <label>
-          <span>Selecao</span>
-          <select id="countryFilter"></select>
-        </label>
-        <label>
           <span>Buscar</span>
           <input id="searchInput" type="search" placeholder="Jogador ou numero" autocomplete="off" />
         </label>
+      </section>
+
+      <section class="country-picker" aria-label="Selecao por grupo e pais">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Grupo - pais - sigla</p>
+            <h2>Selecoes</h2>
+          </div>
+        </div>
+        <div class="country-cards" id="countryCards"></div>
       </section>
 
       <section class="sticker-grid" id="stickerGrid" aria-live="polite"></section>
@@ -326,18 +403,22 @@ const init = async () => {
 
   const data = await loadAlbum();
   const collection = readCollection();
-  const countrySelect = document.querySelector<HTMLSelectElement>("#countryFilter");
   const searchInput = document.querySelector<HTMLInputElement>("#searchInput");
   const grid = document.querySelector<HTMLDivElement>("#stickerGrid");
+  const shell = document.querySelector<HTMLElement>(".shell");
+  const countryCards = document.querySelector<HTMLDivElement>("#countryCards");
 
-  if (!countrySelect || !searchInput || !grid) return;
+  if (!searchInput || !grid || !shell || !countryCards) return;
 
-  countrySelect.innerHTML = data.countries
-    .map((country) => `<option value="${country.id}">Grupo ${country.group} - ${country.namePt}</option>`)
-    .join("");
-
-  countrySelect.addEventListener("change", () => render(data, collection));
+  shell.dataset.countryId = String(data.countries[0]?.id ?? 1);
   searchInput.addEventListener("input", () => render(data, collection));
+  countryCards.addEventListener("click", (event) => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>(".country-card");
+    if (!button?.dataset.countryId) return;
+    shell.dataset.countryId = button.dataset.countryId;
+    render(data, collection);
+    button.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  });
 
   grid.addEventListener("click", (event) => {
     const target = event.target as HTMLElement;
