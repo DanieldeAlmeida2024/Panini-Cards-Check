@@ -116,23 +116,85 @@ const escapeHtml = (value: string | number) =>
     .replace(/'/g, "&#039;");
 
 const formatDate = (value: string) => {
-  if (!value || value === "UNKNOWN") return "Data indisponivel";
+  if (!value || value === "UNKNOWN") return "";
   const parts = value.split("-");
   if (parts.length !== 3) return value;
   return `${parts[0]}/${parts[1]}/${parts[2]}`;
 };
 
 const formatHeight = (heightCm: number) => {
-  if (!heightCm) return "Altura indisponivel";
+  if (!heightCm) return "";
   return `${(heightCm / 100).toFixed(2).replace(".", ",")} m`;
 };
 
 const formatClub = (club?: Club) => {
-  if (!club || club.name === "UNKNOWN") return "Clube indisponivel";
+  if (!club || club.name === "UNKNOWN") return "";
   return club.name;
 };
 
 const flagUrl = (code: string) => `https://flagcdn.com/${FLAG_CODES[code] ?? code.toLowerCase()}.svg`;
+
+const playerMeta = (player?: Player, club?: Club) => {
+  if (!player) return "";
+  return [formatDate(player.birthDate), formatHeight(player.heightCm), formatClub(club)].filter(Boolean).join(" | ");
+};
+
+const initialsFor = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+
+const colorFromText = (text: string, offset = 0) => {
+  let hash = offset;
+  for (let i = 0; i < text.length; i += 1) {
+    hash = text.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue} 76% 46%)`;
+};
+
+const stickerSvg = (sticker: Sticker, country: Country, title: string) => {
+  const uid = `svg-${sticker.id}`;
+  const primary = colorFromText(`${title}-${country.code}`);
+  const secondary = colorFromText(`${country.namePt}-${sticker.slot}`, 180);
+  const initials = sticker.type === "PLAYER" ? initialsFor(title) : sticker.type === "SQUAD" ? "XI" : country.code;
+  const body =
+    sticker.type === "SQUAD"
+      ? `
+        <g fill="rgba(255,255,255,.88)">
+          <circle cx="42" cy="54" r="7"/><circle cx="64" cy="47" r="7"/><circle cx="86" cy="54" r="7"/>
+          <circle cx="52" cy="76" r="7"/><circle cx="76" cy="74" r="7"/>
+          <rect x="26" y="88" width="76" height="30" rx="10"/>
+        </g>`
+      : sticker.type === "BADGE"
+        ? `
+        <path d="M64 17l35 13v27c0 27-15 47-35 57-20-10-35-30-35-57V30l35-13z" fill="rgba(255,255,255,.9)"/>
+        <path d="M64 29l22 8v18c0 18-9 31-22 39-13-8-22-21-22-39V37l22-8z" fill="url(#${uid}-g)"/>`
+        : `
+        <circle cx="64" cy="43" r="24" fill="rgba(255,255,255,.86)"/>
+        <path d="M25 118c4-29 19-47 39-47s35 18 39 47H25z" fill="rgba(255,255,255,.78)"/>
+        <path d="M42 45c8-23 35-29 47-8 0 0-12-8-28-2-11 4-19 10-19 10z" fill="rgba(16,36,33,.28)"/>`;
+
+  return `
+    <svg class="player-svg" viewBox="0 0 128 128" role="img" aria-label="${escapeHtml(title)}">
+      <defs>
+        <linearGradient id="${uid}-g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="${primary}"/>
+          <stop offset="1" stop-color="${secondary}"/>
+        </linearGradient>
+      </defs>
+      <rect width="128" height="128" rx="28" fill="url(#${uid}-g)"/>
+      <circle cx="103" cy="26" r="34" fill="rgba(255,255,255,.2)"/>
+      <circle cx="20" cy="108" r="44" fill="rgba(255,255,255,.12)"/>
+      ${body}
+      <text x="64" y="112" text-anchor="middle" font-size="25" font-weight="900" fill="rgba(16,36,33,.72)">${escapeHtml(initials)}</text>
+    </svg>
+  `;
+};
 
 const readCollection = (): CollectionState => {
   try {
@@ -179,13 +241,11 @@ const buildCard = ({
 
   const meta =
     sticker.type === "PLAYER" && player
-      ? `${formatDate(player.birthDate)} | ${formatHeight(player.heightCm)} | ${formatClub(club)}`
+      ? playerMeta(player, club)
       : sticker.type === "BADGE"
         ? "Escudo oficial da selecao"
         : "Foto da selecao completa";
 
-  const initials = country.code.slice(0, 3);
-  const visualLabel = sticker.type === "BADGE" ? country.code : sticker.type === "SQUAD" ? "XI" : initials;
   const title = sticker.type === "PLAYER" && player ? player.name : sticker.title;
 
   card.innerHTML = `
@@ -194,7 +254,7 @@ const buildCard = ({
     </div>
     <div class="player-area" aria-hidden="true">
       <div class="background-number">${String(sticker.slot).padStart(2, "0")}</div>
-      <div class="portrait-placeholder">${escapeHtml(visualLabel)}</div>
+      <div class="portrait-placeholder">${stickerSvg(sticker, country, title)}</div>
       <div class="country-chip">${escapeHtml(country.code)}</div>
     </div>
     <div class="card-copy">
@@ -223,7 +283,7 @@ const getStickerDetails = (
   const title = sticker.type === "PLAYER" && player ? player.name : sticker.title;
   const details =
     sticker.type === "PLAYER" && player
-      ? `${formatDate(player.birthDate)} | ${formatHeight(player.heightCm)} | ${formatClub(club)}`
+      ? playerMeta(player, club)
       : sticker.type === "BADGE"
         ? "Escudo oficial da selecao"
         : "Foto da selecao completa";
@@ -280,21 +340,34 @@ const render = (data: AlbumData, collection: CollectionState) => {
   if (totalMissing) totalMissing.textContent = String(missingStickers.length);
   if (totalRepeats) totalRepeats.textContent = String(repeatsTotal);
   grid.innerHTML = "";
-  countryCards.innerHTML = data.countries
-    .map((country) => {
-      const selected = country.id === selectedCountry.id;
+  const groups = [...new Set(data.countries.map((country) => country.group))];
+  countryCards.innerHTML = groups
+    .map((group) => {
+      const countries = data.countries.filter((country) => country.group === group);
       return `
-        <button
-          class="country-card ${selected ? "is-active" : ""}"
-          type="button"
-          data-country-id="${country.id}"
-          style="--flag-url: url('${flagUrl(country.code)}')"
-          aria-pressed="${selected}"
-        >
-          <span class="country-group">Grupo ${escapeHtml(country.group)}</span>
-          <span class="country-name">${escapeHtml(country.namePt)}</span>
-          <strong>${escapeHtml(country.code)}</strong>
-        </button>
+        <div class="country-group-row">
+          <div class="group-row-title">Grupo ${escapeHtml(group)}</div>
+          <div class="country-row-scroll">
+            ${countries
+              .map((country) => {
+                const selected = country.id === selectedCountry.id;
+                return `
+                  <button
+                    class="country-card ${selected ? "is-active" : ""}"
+                    type="button"
+                    data-country-id="${country.id}"
+                    style="--flag-url: url('${flagUrl(country.code)}')"
+                    aria-pressed="${selected}"
+                  >
+                    <span class="country-group">Grupo ${escapeHtml(country.group)}</span>
+                    <span class="country-name">${escapeHtml(country.namePt)}</span>
+                    <strong>${escapeHtml(country.code)}</strong>
+                  </button>
+                `;
+              })
+              .join("")}
+          </div>
+        </div>
       `;
     })
     .join("");
@@ -325,7 +398,7 @@ const render = (data: AlbumData, collection: CollectionState) => {
         <article class="missing-row">
           <strong>${escapeHtml(sticker.code)}</strong>
           <span>${escapeHtml(title)}</span>
-          <small>${escapeHtml(country?.namePt ?? "Selecao indisponivel")} | ${escapeHtml(details)}</small>
+          <small>${escapeHtml([country?.namePt, details].filter(Boolean).join(" | "))}</small>
         </article>
       `;
     })
