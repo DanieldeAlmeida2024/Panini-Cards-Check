@@ -190,7 +190,6 @@ const buildCard = ({
 
   card.innerHTML = `
     <div class="card-topline">
-      <span class="sticker-code">${escapeHtml(sticker.code)}</span>
       <span class="owned-dot" aria-hidden="true"></span>
     </div>
     <div class="player-area" aria-hidden="true">
