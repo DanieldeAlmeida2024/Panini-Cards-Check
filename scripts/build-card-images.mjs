@@ -67,6 +67,11 @@ for (const file of files) {
     continue;
   }
 
+  if (["TIME", "SELECAO", "EQUIPE", "SQUAD"].includes(normalize(requestedName))) {
+    manifest[`${code.toUpperCase()}-13`] = `/images-cards/${targetName}`;
+    continue;
+  }
+
   const players = playersByCountry.get(country.id) ?? [];
   const normalizedRequested = normalize(requestedName);
   const ranked = players
