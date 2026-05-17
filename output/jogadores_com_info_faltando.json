@@ -169,27 +169,11 @@
   },
   {
     "selecao": "Paraguai",
+    "nome": "Matías Villasanti"
+  },
+  {
+    "selecao": "Paraguai",
     "nome": "Diego Gómez"
-  },
-  {
-    "selecao": "Paraguai",
-    "nome": "UNKNOWN_PLAYER_PAR_14"
-  },
-  {
-    "selecao": "Paraguai",
-    "nome": "UNKNOWN_PLAYER_PAR_15"
-  },
-  {
-    "selecao": "Paraguai",
-    "nome": "UNKNOWN_PLAYER_PAR_16"
-  },
-  {
-    "selecao": "Paraguai",
-    "nome": "UNKNOWN_PLAYER_PAR_17"
-  },
-  {
-    "selecao": "Paraguai",
-    "nome": "UNKNOWN_PLAYER_PAR_18"
   },
   {
     "selecao": "Austrália",
@@ -244,8 +228,28 @@
     "nome": "Emil Holm"
   },
   {
+    "selecao": "Suécia",
+    "nome": "Hugo Larsson"
+  },
+  {
+    "selecao": "Suécia",
+    "nome": "Daniel Svensson"
+  },
+  {
     "selecao": "Tunísia",
     "nome": "Van Valery"
+  },
+  {
+    "selecao": "Tunísia",
+    "nome": "Ali Abdi"
+  },
+  {
+    "selecao": "Egito",
+    "nome": "Mohamed Hamdy"
+  },
+  {
+    "selecao": "Egito",
+    "nome": "Zizo"
   },
   {
     "selecao": "Egito",
@@ -314,10 +318,6 @@
   {
     "selecao": "Arábia Saudita",
     "nome": "Hassan Altambakti"
-  },
-  {
-    "selecao": "Arábia Saudita",
-    "nome": "Musab Aljuwayr"
   },
   {
     "selecao": "Arábia Saudita",

@@ -833,6 +833,11 @@ select {
     inset 0 0 0 1px rgba(255, 255, 255, 0.42);
 }
 
+.sticker-card.squad {
+  grid-column: span 2;
+  aspect-ratio: 1.55;
+}
+
 .card-art {
   position: absolute;
   inset: 0;
@@ -874,6 +879,15 @@ select {
   object-fit: cover;
   object-position: center;
   filter: saturate(1.04) contrast(1.03);
+}
+
+.squad .card-art {
+  padding: 0;
+}
+
+.squad .card-art .player-svg {
+  width: 100%;
+  height: 100%;
 }
 
 .squad.has-manual-image .manual-card-image {
