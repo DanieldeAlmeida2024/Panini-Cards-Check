@@ -53,6 +53,12 @@ type AlbumData = {
 };
 
 type CollectionState = Record<string, number>;
+type ExportPayload = {
+  app: "panini-world-cup-2026-album";
+  version: 1;
+  exportedAt: string;
+  collection: CollectionState;
+};
 
 const STORAGE_KEY = "panini-world-cup-2026-collection-v1";
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -220,6 +226,24 @@ const writeCollection = (state: CollectionState) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 };
 
+const normalizeCollection = (value: unknown): CollectionState => {
+  if (!value || typeof value !== "object") return {};
+  const source =
+    "collection" in value && typeof (value as { collection?: unknown }).collection === "object"
+      ? (value as { collection: unknown }).collection
+      : value;
+  const output: CollectionState = {};
+
+  for (const [key, rawQuantity] of Object.entries(source as Record<string, unknown>)) {
+    const quantity = Number(rawQuantity);
+    if (Number.isFinite(quantity) && quantity > 0) {
+      output[String(key)] = Math.floor(quantity);
+    }
+  }
+
+  return output;
+};
+
 const loadAlbum = async (): Promise<AlbumData> => {
   const response = await fetch("/data/panini_world_cup_2026.json");
   if (!response.ok) {
@@ -260,17 +284,15 @@ const buildCard = ({
   const title = sticker.type === "PLAYER" && player ? player.name : sticker.title;
 
   card.innerHTML = `
+    <div class="card-art ${player?.media?.found ? "has-photo" : ""}" aria-hidden="true">
+      ${player?.media?.found ? `<img class="player-photo" src="${escapeHtml(player.media.thumbnailUrl || player.media.imageUrl)}" alt="${escapeHtml(title)}" loading="lazy" onerror="this.remove()" />` : ""}
+      ${stickerSvg(sticker, country, title)}
+    </div>
     <div class="card-topline">
       <span class="owned-dot" aria-hidden="true"></span>
     </div>
-    <div class="player-area" aria-hidden="true">
-      <div class="background-number">${String(sticker.slot).padStart(2, "0")}</div>
-      <div class="portrait-placeholder ${player?.media?.found ? "has-photo" : ""}">
-        ${player?.media?.found ? `<img class="player-photo" src="${escapeHtml(player.media.thumbnailUrl || player.media.imageUrl)}" alt="${escapeHtml(title)}" loading="lazy" onerror="this.remove()" />` : ""}
-        ${stickerSvg(sticker, country, title)}
-      </div>
-      <div class="country-chip">${escapeHtml(country.code)}</div>
-    </div>
+    <div class="background-number" aria-hidden="true">${String(sticker.slot).padStart(2, "0")}</div>
+    <div class="country-chip">${escapeHtml(country.code)}</div>
     <div class="card-copy">
       <h2>${escapeHtml(title)}</h2>
       <p>${escapeHtml(meta)}</p>
@@ -283,6 +305,46 @@ const buildCard = ({
   `;
 
   return card;
+};
+
+const exportCollection = (collection: CollectionState) => {
+  const payload: ExportPayload = {
+    app: "panini-world-cup-2026-album",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    collection,
+  };
+  const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `album-panini-2026-${new Date().toISOString().slice(0, 10)}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+const openCompareModal = (items: Array<{ sticker: Sticker; country?: Country; title: string; details: string }>) => {
+  const modal = document.querySelector<HTMLDialogElement>("#compareModal");
+  const modalList = document.querySelector<HTMLDivElement>("#compareList");
+  const modalCount = document.querySelector<HTMLSpanElement>("#compareCount");
+  if (!modal || !modalList || !modalCount) return;
+
+  modalCount.textContent = String(items.length);
+  modalList.innerHTML = items.length
+    ? items
+        .map(
+          ({ sticker, country, title, details }) => `
+            <article class="compare-row">
+              <strong>${escapeHtml(sticker.code)}</strong>
+              <span>${escapeHtml(title)}</span>
+              <small>${escapeHtml([country?.namePt, details].filter(Boolean).join(" | "))}</small>
+            </article>
+          `,
+        )
+        .join("")
+    : `<p class="modal-empty">Nenhuma sobra do arquivo importado cobre uma figurinha que falta no seu album.</p>`;
+
+  modal.showModal();
 };
 
 const getStickerDetails = (
@@ -471,6 +533,19 @@ const init = async () => {
         </div>
       </section>
 
+      <section class="share-panel" aria-label="Compartilhar album por arquivo">
+        <div>
+          <p class="eyebrow">Compartilhar album</p>
+          <h2>Exportar ou importar JSON</h2>
+        </div>
+        <div class="share-actions">
+          <button id="exportAlbum" type="button">Exportar</button>
+          <button id="replaceAlbum" type="button">Importar tudo</button>
+          <button id="compareAlbum" type="button">Comparar sobras</button>
+        </div>
+        <input id="albumImportFile" type="file" accept="application/json,.json" hidden />
+      </section>
+
       <section class="controls" aria-label="Filtros do album">
         <label>
           <span>Buscar</span>
@@ -506,6 +581,17 @@ const init = async () => {
         </div>
         <div class="missing-list" id="missingList"></div>
       </section>
+
+      <dialog class="compare-modal" id="compareModal">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Comparacao</p>
+            <h2><span id="compareCount">0</span> figurinhas uteis</h2>
+          </div>
+          <button class="modal-close" id="compareClose" type="button">Fechar</button>
+        </div>
+        <div class="compare-list" id="compareList"></div>
+      </dialog>
     </main>
   `;
 
@@ -517,11 +603,74 @@ const init = async () => {
   const countryCards = document.querySelector<HTMLDivElement>("#countryCards");
   const countrySearch = document.querySelector<HTMLInputElement>("#countrySearch");
   const countryToggle = document.querySelector<HTMLButtonElement>("#countryToggle");
+  const exportButton = document.querySelector<HTMLButtonElement>("#exportAlbum");
+  const replaceButton = document.querySelector<HTMLButtonElement>("#replaceAlbum");
+  const compareButton = document.querySelector<HTMLButtonElement>("#compareAlbum");
+  const importFile = document.querySelector<HTMLInputElement>("#albumImportFile");
+  const compareClose = document.querySelector<HTMLButtonElement>("#compareClose");
+  const compareModal = document.querySelector<HTMLDialogElement>("#compareModal");
+  let importMode: "replace" | "compare" = "replace";
 
-  if (!searchInput || !grid || !shell || !countryCards || !countrySearch || !countryToggle) return;
+  if (
+    !searchInput ||
+    !grid ||
+    !shell ||
+    !countryCards ||
+    !countrySearch ||
+    !countryToggle ||
+    !exportButton ||
+    !replaceButton ||
+    !compareButton ||
+    !importFile ||
+    !compareClose ||
+    !compareModal
+  )
+    return;
 
   shell.dataset.countryId = String(data.countries[0]?.id ?? 1);
   shell.dataset.countryPickerExpanded = "false";
+  exportButton.addEventListener("click", () => exportCollection(collection));
+  replaceButton.addEventListener("click", () => {
+    importMode = "replace";
+    importFile.click();
+  });
+  compareButton.addEventListener("click", () => {
+    importMode = "compare";
+    importFile.click();
+  });
+  compareClose.addEventListener("click", () => compareModal.close());
+  importFile.addEventListener("change", async () => {
+    const file = importFile.files?.[0];
+    importFile.value = "";
+    if (!file) return;
+
+    try {
+      const imported = normalizeCollection(JSON.parse(await file.text()));
+
+      if (importMode === "replace") {
+        for (const key of Object.keys(collection)) delete collection[key];
+        Object.assign(collection, imported);
+        writeCollection(collection);
+        render(data, collection);
+        return;
+      }
+
+      const countriesById = new Map(data.countries.map((country) => [country.id, country]));
+      const playersById = new Map(data.players.map((player) => [player.id, player]));
+      const clubsById = new Map(data.clubs.map((club) => [club.id, club]));
+      const usefulExtras = data.stickers
+        .filter((sticker) => sticker.countryId > 0)
+        .filter((sticker) => (imported[String(sticker.id)] ?? 0) > 1 && !collection[String(sticker.id)])
+        .map((sticker) => {
+          const { country, title, details } = getStickerDetails(sticker, countriesById, playersById, clubsById);
+          return { sticker, country, title, details };
+        });
+
+      openCompareModal(usefulExtras);
+    } catch {
+      window.alert("Nao foi possivel ler esse JSON.");
+    }
+  });
   searchInput.addEventListener("input", () => render(data, collection));
   countrySearch.addEventListener("input", () => render(data, collection));
   countryToggle.addEventListener("click", () => {
