@@ -61,6 +61,10 @@ type ExportPayload = {
   collection: CollectionState;
 };
 type ListMode = "missing" | "repeats";
+type InstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+};
 
 const STORAGE_KEY = "panini-world-cup-2026-collection-v1";
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -239,6 +243,13 @@ const readCollection = (): CollectionState => {
 
 const writeCollection = (state: CollectionState) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+};
+
+const registerServiceWorker = () => {
+  if (!("serviceWorker" in navigator)) return;
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+  });
 };
 
 const normalizeCollection = (value: unknown): CollectionState => {
@@ -651,6 +662,7 @@ const init = async () => {
           <h2>Exportar ou importar JSON</h2>
         </div>
         <div class="share-actions">
+          <button id="installApp" type="button" hidden>Instalar app</button>
           <button id="exportAlbum" type="button">Exportar</button>
           <button id="replaceAlbum" type="button">Importar tudo</button>
           <button id="compareAlbum" type="button">Comparar sobras</button>
@@ -739,6 +751,7 @@ const init = async () => {
   const countrySearch = document.querySelector<HTMLInputElement>("#countrySearch");
   const countryToggle = document.querySelector<HTMLButtonElement>("#countryToggle");
   const exportButton = document.querySelector<HTMLButtonElement>("#exportAlbum");
+  const installButton = document.querySelector<HTMLButtonElement>("#installApp");
   const replaceButton = document.querySelector<HTMLButtonElement>("#replaceAlbum");
   const compareButton = document.querySelector<HTMLButtonElement>("#compareAlbum");
   const importFile = document.querySelector<HTMLInputElement>("#albumImportFile");
@@ -757,6 +770,7 @@ const init = async () => {
     !countryCards ||
     !countrySearch ||
     !countryToggle ||
+    !installButton ||
     !exportButton ||
     !replaceButton ||
     !compareButton ||
@@ -772,6 +786,25 @@ const init = async () => {
 
   shell.dataset.countryId = String(data.countries[0]?.id ?? 1);
   shell.dataset.countryPickerExpanded = "false";
+  let deferredInstallPrompt: InstallPromptEvent | null = null;
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  installButton.hidden = isStandalone;
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event as InstallPromptEvent;
+    installButton.hidden = false;
+  });
+  installButton.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) return;
+    await deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+    if (choice.outcome === "accepted") installButton.hidden = true;
+    deferredInstallPrompt = null;
+  });
+  window.addEventListener("appinstalled", () => {
+    installButton.hidden = true;
+    deferredInstallPrompt = null;
+  });
   exportButton.addEventListener("click", () => exportCollection(collection));
   replaceButton.addEventListener("click", () => {
     importMode = "replace";
@@ -909,3 +942,5 @@ const init = async () => {
 init().catch((error: unknown) => {
   app.innerHTML = `<main class="shell"><p class="empty-state">${error instanceof Error ? error.message : "Erro ao abrir o album."}</p></main>`;
 });
+
+registerServiceWorker();
