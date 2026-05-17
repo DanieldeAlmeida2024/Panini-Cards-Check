@@ -1,0 +1,470 @@
+[
+  {
+    "selecao": "México",
+    "nome": "Diego Lainez"
+  },
+  {
+    "selecao": "México",
+    "nome": "Marcel Ruiz"
+  },
+  {
+    "selecao": "África do Sul",
+    "nome": "Sipho Chaine"
+  },
+  {
+    "selecao": "África do Sul",
+    "nome": "Bathuisi Aubaas"
+  },
+  {
+    "selecao": "África do Sul",
+    "nome": "Ioraam Rayners"
+  },
+  {
+    "selecao": "África do Sul",
+    "nome": "Oswin Appolis"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Hyeon-woo Jo"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Seung-Gyu Kim"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Min-jae Kim"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Yu-min Cho"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Young-woo Seol"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Han-beom Lee"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Tae-seok Lee"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Myung-jae Lee"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Jae-sung Lee"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "In-beom Hwang"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Seung-ho Paik"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Dong-gyeong Lee"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Gue-sung Cho"
+  },
+  {
+    "selecao": "Coreia do Sul",
+    "nome": "Hyeon-Gyu Oh"
+  },
+  {
+    "selecao": "República Tcheca",
+    "nome": "Václav Černý"
+  },
+  {
+    "selecao": "Catar",
+    "nome": "Sultan Albrake"
+  },
+  {
+    "selecao": "Catar",
+    "nome": "Akram Hassan Afif"
+  },
+  {
+    "selecao": "Catar",
+    "nome": "Ahmed Al Ganehi"
+  },
+  {
+    "selecao": "Suíça",
+    "nome": "Ricardo Rodriguez"
+  },
+  {
+    "selecao": "Brasil",
+    "nome": "Bento"
+  },
+  {
+    "selecao": "Brasil",
+    "nome": "Danilo"
+  },
+  {
+    "selecao": "Brasil",
+    "nome": "Wesley"
+  },
+  {
+    "selecao": "Brasil",
+    "nome": "Luiz Henrique"
+  },
+  {
+    "selecao": "Brasil",
+    "nome": "João Pedro"
+  },
+  {
+    "selecao": "Brasil",
+    "nome": "Estêvão"
+  },
+  {
+    "selecao": "Marrocos",
+    "nome": "Munir El Kajoui"
+  },
+  {
+    "selecao": "Marrocos",
+    "nome": "Adam Masina"
+  },
+  {
+    "selecao": "Escócia",
+    "nome": "Jack Hendry"
+  },
+  {
+    "selecao": "Estados Unidos",
+    "nome": "Math Freese"
+  },
+  {
+    "selecao": "Estados Unidos",
+    "nome": "Chris Richards"
+  },
+  {
+    "selecao": "Estados Unidos",
+    "nome": "Mark McKenzie"
+  },
+  {
+    "selecao": "Estados Unidos",
+    "nome": "Weston McKenny"
+  },
+  {
+    "selecao": "Estados Unidos",
+    "nome": "Christian Roldan"
+  },
+  {
+    "selecao": "Estados Unidos",
+    "nome": "Diego Luna"
+  },
+  {
+    "selecao": "Estados Unidos",
+    "nome": "Malim Tillman"
+  },
+  {
+    "selecao": "Paraguai",
+    "nome": "Roberto Fernández"
+  },
+  {
+    "selecao": "Paraguai",
+    "nome": "Diego Gómez"
+  },
+  {
+    "selecao": "Paraguai",
+    "nome": "UNKNOWN_PLAYER_PAR_14"
+  },
+  {
+    "selecao": "Paraguai",
+    "nome": "UNKNOWN_PLAYER_PAR_15"
+  },
+  {
+    "selecao": "Paraguai",
+    "nome": "UNKNOWN_PLAYER_PAR_16"
+  },
+  {
+    "selecao": "Paraguai",
+    "nome": "UNKNOWN_PLAYER_PAR_17"
+  },
+  {
+    "selecao": "Paraguai",
+    "nome": "UNKNOWN_PLAYER_PAR_18"
+  },
+  {
+    "selecao": "Austrália",
+    "nome": "Lewis Miller"
+  },
+  {
+    "selecao": "Austrália",
+    "nome": "Aiden O’Neill"
+  },
+  {
+    "selecao": "Austrália",
+    "nome": "Mohamed Touré"
+  },
+  {
+    "selecao": "Turquia",
+    "nome": "Caglar Soyunku"
+  },
+  {
+    "selecao": "Turquia",
+    "nome": "Irfan Can Kahvecu"
+  },
+  {
+    "selecao": "Turquia",
+    "nome": "Baris Alper Yilmaz"
+  },
+  {
+    "selecao": "Costa do Marfim",
+    "nome": "Ibrahim Sangaré"
+  },
+  {
+    "selecao": "Equador",
+    "nome": "Alan Franco"
+  },
+  {
+    "selecao": "Equador",
+    "nome": "John Veboah"
+  },
+  {
+    "selecao": "Equador",
+    "nome": "Kevin Rodríguez"
+  },
+  {
+    "selecao": "Japão",
+    "nome": "Koki Ogawa"
+  },
+  {
+    "selecao": "Suécia",
+    "nome": "Victor Johansson"
+  },
+  {
+    "selecao": "Suécia",
+    "nome": "Emil Holm"
+  },
+  {
+    "selecao": "Tunísia",
+    "nome": "Van Valery"
+  },
+  {
+    "selecao": "Egito",
+    "nome": "Mohamed Lasheen"
+  },
+  {
+    "selecao": "Egito",
+    "nome": "Mostafa Mohamed"
+  },
+  {
+    "selecao": "Egito",
+    "nome": "Trezeguet"
+  },
+  {
+    "selecao": "Irã",
+    "nome": "Saeed Ezatolahi"
+  },
+  {
+    "selecao": "Nova Zelândia",
+    "nome": "Max Crocombe-Payne"
+  },
+  {
+    "selecao": "Nova Zelândia",
+    "nome": "Tim Payne"
+  },
+  {
+    "selecao": "Nova Zelândia",
+    "nome": "Joe Bell"
+  },
+  {
+    "selecao": "Nova Zelândia",
+    "nome": "Ryan Thomas"
+  },
+  {
+    "selecao": "Nova Zelândia",
+    "nome": "Chris Wood"
+  },
+  {
+    "selecao": "Espanha",
+    "nome": "Rodri"
+  },
+  {
+    "selecao": "Cabo Verde",
+    "nome": "Pico"
+  },
+  {
+    "selecao": "Cabo Verde",
+    "nome": "Diney"
+  },
+  {
+    "selecao": "Cabo Verde",
+    "nome": "João Paulo"
+  },
+  {
+    "selecao": "Cabo Verde",
+    "nome": "Kevin Pina"
+  },
+  {
+    "selecao": "Arábia Saudita",
+    "nome": "Nawaf Alaqidi"
+  },
+  {
+    "selecao": "Arábia Saudita",
+    "nome": "Jihad Thakri"
+  },
+  {
+    "selecao": "Arábia Saudita",
+    "nome": "Hassan Altambakti"
+  },
+  {
+    "selecao": "Arábia Saudita",
+    "nome": "Musab Aljuwayr"
+  },
+  {
+    "selecao": "Arábia Saudita",
+    "nome": "Ziyad Aljohani"
+  },
+  {
+    "selecao": "Arábia Saudita",
+    "nome": "Abdullah Alkhaibari"
+  },
+  {
+    "selecao": "Arábia Saudita",
+    "nome": "Nasser Aldawsari"
+  },
+  {
+    "selecao": "Arábia Saudita",
+    "nome": "Saleh Abu Alshamat"
+  },
+  {
+    "selecao": "Arábia Saudita",
+    "nome": "Marwan Alsahafi"
+  },
+  {
+    "selecao": "Arábia Saudita",
+    "nome": "Salem Aldawsari"
+  },
+  {
+    "selecao": "Uruguai",
+    "nome": "Sebastian Caceres"
+  },
+  {
+    "selecao": "Uruguai",
+    "nome": "Mathias Olivera"
+  },
+  {
+    "selecao": "Uruguai",
+    "nome": "Manuel Ugarte"
+  },
+  {
+    "selecao": "Uruguai",
+    "nome": "Maxi Araujo"
+  },
+  {
+    "selecao": "Senegal",
+    "nome": "Eduardo Mendy"
+  },
+  {
+    "selecao": "Senegal",
+    "nome": "Abdoulaye Seck"
+  },
+  {
+    "selecao": "Iraque",
+    "nome": "Hussein Ali"
+  },
+  {
+    "selecao": "Iraque",
+    "nome": "Akam Hashem"
+  },
+  {
+    "selecao": "Argentina",
+    "nome": "Nico González"
+  },
+  {
+    "selecao": "Argélia",
+    "nome": "Farés Chaibi"
+  },
+  {
+    "selecao": "Argélia",
+    "nome": "Mohammed Amoura"
+  },
+  {
+    "selecao": "Jordânia",
+    "nome": "Saleem Obaid"
+  },
+  {
+    "selecao": "Jordânia",
+    "nome": "Ibrahim Saadeh"
+  },
+  {
+    "selecao": "Portugal",
+    "nome": "Nuno Mendes"
+  },
+  {
+    "selecao": "Portugal",
+    "nome": "Vitinha"
+  },
+  {
+    "selecao": "RD Congo",
+    "nome": "Ngal’ayel Mukau"
+  },
+  {
+    "selecao": "Uzbequistão",
+    "nome": "Farrukh Savfiev"
+  },
+  {
+    "selecao": "Colômbia",
+    "nome": "Daniel Muñoz"
+  },
+  {
+    "selecao": "Colômbia",
+    "nome": "James Rodríguez"
+  },
+  {
+    "selecao": "Colômbia",
+    "nome": "Jhon Arias"
+  },
+  {
+    "selecao": "Colômbia",
+    "nome": "Luis Díaz"
+  },
+  {
+    "selecao": "Inglaterra",
+    "nome": "Anthony Gordon"
+  },
+  {
+    "selecao": "Gana",
+    "nome": "Gideon Mensah"
+  },
+  {
+    "selecao": "Panamá",
+    "nome": "Andrés Andrade"
+  },
+  {
+    "selecao": "Panamá",
+    "nome": "Eric Davis"
+  },
+  {
+    "selecao": "Panamá",
+    "nome": "Cristian Martínez"
+  },
+  {
+    "selecao": "Panamá",
+    "nome": "Édgar Bárcenas"
+  },
+  {
+    "selecao": "Panamá",
+    "nome": "Ismael Díaz"
+  },
+  {
+    "selecao": "Panamá",
+    "nome": "José Fajardo"
+  },
+  {
+    "selecao": "Panamá",
+    "nome": "José Luis Rodríguez"
+  },
+  {
+    "selecao": "Panamá",
+    "nome": "Alberto Quintero"
+  }
+]

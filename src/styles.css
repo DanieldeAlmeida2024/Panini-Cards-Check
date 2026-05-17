@@ -384,8 +384,19 @@ input:focus {
   z-index: 3;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 4px;
+}
+
+.sticker-code {
+  border: 1px solid rgba(216, 255, 132, 0.42);
+  border-radius: 999px;
+  padding: 2px 5px;
+  background: rgba(7, 21, 15, 0.72);
+  color: #d9f99d;
+  font-size: 0.56rem;
+  font-weight: 950;
+  line-height: 1;
 }
 
 .owned-dot {

@@ -309,6 +309,7 @@ const buildCard = ({
       ${stickerSvg(sticker, country, title)}
     </div>
     <div class="card-topline">
+      <span class="sticker-code">${escapeHtml(sticker.code)}</span>
       <span class="owned-dot" aria-hidden="true"></span>
     </div>
     <div class="background-number" aria-hidden="true">${String(sticker.slot).padStart(2, "0")}</div>
