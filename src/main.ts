@@ -22,6 +22,17 @@ type Player = {
   birthDate: string;
   heightCm: number;
   position: string;
+  media?: {
+    found: boolean;
+    imageUrl: string;
+    thumbnailUrl: string;
+    provider: string;
+    source: string;
+    title: string;
+    attributionUrl: string;
+    searchQuery: string;
+    nationalTeamPreferred: boolean;
+  };
 };
 
 type Sticker = {
@@ -254,7 +265,10 @@ const buildCard = ({
     </div>
     <div class="player-area" aria-hidden="true">
       <div class="background-number">${String(sticker.slot).padStart(2, "0")}</div>
-      <div class="portrait-placeholder">${stickerSvg(sticker, country, title)}</div>
+      <div class="portrait-placeholder ${player?.media?.found ? "has-photo" : ""}">
+        ${player?.media?.found ? `<img class="player-photo" src="${escapeHtml(player.media.thumbnailUrl || player.media.imageUrl)}" alt="${escapeHtml(title)}" loading="lazy" onerror="this.remove()" />` : ""}
+        ${stickerSvg(sticker, country, title)}
+      </div>
       <div class="country-chip">${escapeHtml(country.code)}</div>
     </div>
     <div class="card-copy">
