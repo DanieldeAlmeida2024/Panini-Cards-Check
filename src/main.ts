@@ -60,6 +60,7 @@ type ExportPayload = {
   exportedAt: string;
   collection: CollectionState;
 };
+type ListMode = "missing" | "repeats";
 
 const STORAGE_KEY = "panini-world-cup-2026-collection-v1";
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -381,6 +382,56 @@ const openCompareModal = (items: Array<{ sticker: Sticker; country?: Country; ti
   modal.showModal();
 };
 
+const openStickerModal = ({
+  title,
+  subtitle,
+  stickers,
+  data,
+  collection,
+  cardImages,
+}: {
+  title: string;
+  subtitle: string;
+  stickers: Sticker[];
+  data: AlbumData;
+  collection: CollectionState;
+  cardImages: CardImageManifest;
+}) => {
+  const modal = document.querySelector<HTMLDialogElement>("#cardModal");
+  const modalTitle = document.querySelector<HTMLHeadingElement>("#cardModalTitle");
+  const modalSubtitle = document.querySelector<HTMLParagraphElement>("#cardModalSubtitle");
+  const modalList = document.querySelector<HTMLDivElement>("#cardModalList");
+  if (!modal || !modalTitle || !modalSubtitle || !modalList) return;
+
+  const countriesById = new Map(data.countries.map((country) => [country.id, country]));
+  const playersById = new Map(data.players.map((player) => [player.id, player]));
+  const clubsById = new Map(data.clubs.map((club) => [club.id, club]));
+
+  modalTitle.textContent = title;
+  modalSubtitle.textContent = subtitle;
+  modalList.innerHTML = "";
+
+  for (const sticker of stickers) {
+    const country = countriesById.get(sticker.countryId);
+    const player = sticker.playerId ? playersById.get(sticker.playerId) : undefined;
+    const club = player ? clubsById.get(player.clubId) : undefined;
+    if (!country) continue;
+
+    modalList.appendChild(
+      buildCard({
+        sticker,
+        country,
+        player,
+        club,
+        quantity: collection[String(sticker.id)] ?? 0,
+        manualImageUrl: cardImages[sticker.code],
+      }),
+    );
+  }
+
+  modal.showModal();
+};
+
 const getStickerDetails = (
   sticker: Sticker,
   countriesById: Map<number, Country>,
@@ -534,8 +585,8 @@ const render = (data: AlbumData, collection: CollectionState, cardImages: CardIm
       const { country, title, details } = getStickerDetails(sticker, countriesById, playersById, clubsById);
       return `
         <article class="missing-row">
-          <strong>${escapeHtml(sticker.code)}</strong>
-          <span>${escapeHtml(title)}</span>
+          <button class="list-code" type="button" data-list-mode="missing" data-country-id="${sticker.countryId}">${escapeHtml(sticker.code)}</button>
+          <button class="list-title" type="button" data-sticker-id="${sticker.id}">${escapeHtml(title)}</button>
           <small>${escapeHtml([country?.namePt, details].filter(Boolean).join(" | "))}</small>
         </article>
       `;
@@ -548,8 +599,8 @@ const render = (data: AlbumData, collection: CollectionState, cardImages: CardIm
           const { country, title, details } = getStickerDetails(sticker, countriesById, playersById, clubsById);
           return `
             <article class="missing-row repeat-row">
-              <strong>${escapeHtml(sticker.code)}</strong>
-              <span>${escapeHtml(title)}</span>
+              <button class="list-code" type="button" data-list-mode="repeats" data-country-id="${sticker.countryId}">${escapeHtml(sticker.code)}</button>
+              <button class="list-title" type="button" data-sticker-id="${sticker.id}">${escapeHtml(title)}</button>
               <small>${escapeHtml([country?.namePt, details].filter(Boolean).join(" | "))}</small>
               <em>${escapeHtml(repeats)}x</em>
             </article>
@@ -664,6 +715,17 @@ const init = async () => {
         </div>
         <div class="compare-list" id="compareList"></div>
       </dialog>
+
+      <dialog class="compare-modal card-modal" id="cardModal">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow" id="cardModalSubtitle">Figurinha</p>
+            <h2 id="cardModalTitle">Carta</h2>
+          </div>
+          <button class="modal-close" id="cardModalClose" type="button">Fechar</button>
+        </div>
+        <div class="card-modal-list" id="cardModalList"></div>
+      </dialog>
     </main>
   `;
 
@@ -682,6 +744,10 @@ const init = async () => {
   const importFile = document.querySelector<HTMLInputElement>("#albumImportFile");
   const compareClose = document.querySelector<HTMLButtonElement>("#compareClose");
   const compareModal = document.querySelector<HTMLDialogElement>("#compareModal");
+  const cardModalClose = document.querySelector<HTMLButtonElement>("#cardModalClose");
+  const cardModal = document.querySelector<HTMLDialogElement>("#cardModal");
+  const missingList = document.querySelector<HTMLDivElement>("#missingList");
+  const repeatsList = document.querySelector<HTMLDivElement>("#repeatsList");
   let importMode: "replace" | "compare" = "replace";
 
   if (
@@ -696,7 +762,11 @@ const init = async () => {
     !compareButton ||
     !importFile ||
     !compareClose ||
-    !compareModal
+    !compareModal ||
+    !cardModalClose ||
+    !cardModal ||
+    !missingList ||
+    !repeatsList
   )
     return;
 
@@ -712,6 +782,7 @@ const init = async () => {
     importFile.click();
   });
   compareClose.addEventListener("click", () => compareModal.close());
+  cardModalClose.addEventListener("click", () => cardModal.close());
   importFile.addEventListener("change", async () => {
     const file = importFile.files?.[0];
     importFile.value = "";
@@ -757,6 +828,50 @@ const init = async () => {
     render(data, collection, cardImages);
     button.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   });
+
+  const openListModal = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    const titleButton = target.closest<HTMLButtonElement>(".list-title");
+    const codeButton = target.closest<HTMLButtonElement>(".list-code");
+    const countriesById = new Map(data.countries.map((country) => [country.id, country]));
+    const baseStickers = data.stickers.filter((sticker) => sticker.countryId > 0);
+    const modeForButton = (codeButton?.dataset.listMode as ListMode | undefined) ?? "missing";
+
+    if (titleButton?.dataset.stickerId) {
+      const sticker = data.stickers.find((item) => item.id === Number(titleButton.dataset.stickerId));
+      if (!sticker) return;
+      const country = countriesById.get(sticker.countryId);
+      openStickerModal({
+        title: sticker.code,
+        subtitle: country ? `${country.namePt} | ${titleButton.textContent ?? "Figurinha"}` : titleButton.textContent ?? "Figurinha",
+        stickers: [sticker],
+        data,
+        collection,
+        cardImages,
+      });
+      return;
+    }
+
+    if (codeButton?.dataset.countryId) {
+      const countryId = Number(codeButton.dataset.countryId);
+      const country = countriesById.get(countryId);
+      const stickers =
+        modeForButton === "repeats"
+          ? baseStickers.filter((sticker) => sticker.countryId === countryId && (collection[String(sticker.id)] ?? 0) > 1)
+          : baseStickers.filter((sticker) => sticker.countryId === countryId && !collection[String(sticker.id)]);
+      openStickerModal({
+        title: country?.namePt ?? "Selecao",
+        subtitle: modeForButton === "repeats" ? "Figurinhas repetidas" : "Figurinhas faltando",
+        stickers: stickers.sort((a, b) => a.slot - b.slot),
+        data,
+        collection,
+        cardImages,
+      });
+    }
+  };
+
+  missingList.addEventListener("click", openListModal);
+  repeatsList.addEventListener("click", openListModal);
 
   grid.addEventListener("click", (event) => {
     const target = event.target as HTMLElement;
