@@ -196,17 +196,6 @@ for (const dataPath of dataPaths) {
 
   const nextPlayerId = Math.max(...data.players.map((player) => player.id)) + 1;
   const nextStickerId = Math.max(...data.stickers.map((sticker) => sticker.id)) + 1;
-  data.stickers.push({
-    id: nextStickerId,
-    code: "COCA-1",
-    albumPageId: 50,
-    countryId: cocaCountry.id,
-    playerId: 0,
-    slot: 1,
-    type: "SPECIAL",
-    title: "Coca-Cola",
-    scope: "COCA_COLA",
-  });
 
   cocaPlayers.forEach(([name, selection], index) => {
     const playerId = nextPlayerId + index;
@@ -225,12 +214,12 @@ for (const dataPath of dataPaths) {
       selection,
     });
     data.stickers.push({
-      id: nextStickerId + index + 1,
-      code: `COCA-${index + 2}`,
+      id: nextStickerId + index,
+      code: `COCA-${index + 1}`,
       albumPageId: 50,
       countryId: cocaCountry.id,
       playerId,
-      slot: index + 2,
+      slot: index + 1,
       type: "PLAYER",
       title: name,
       scope: "COCA_COLA",
@@ -242,12 +231,12 @@ for (const dataPath of dataPaths) {
     manualAlbumUpdates: {
       appliedAt: new Date().toISOString(),
       filledPlayerInfo: filled,
-      cocaColaCards: 15,
+      cocaColaCards: 14,
     },
   };
 
   await writeFile(dataPath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
-  console.log(`[ALBUM] ${path.relative(root, dataPath)} preenchidos=${filled} coca=15`);
+  console.log(`[ALBUM] ${path.relative(root, dataPath)} preenchidos=${filled} coca=14`);
 }
 
 const publicData = JSON.parse(await readFile(dataPaths[1], "utf8"));

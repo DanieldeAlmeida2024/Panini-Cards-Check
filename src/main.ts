@@ -559,7 +559,7 @@ const init = async () => {
 
       <section class="stats-panel" aria-label="Resumo da colecao">
         <div>
-          <span id="totalOwned">0/960</span>
+          <span id="totalOwned">0</span>
           <small>Selecionadas</small>
         </div>
         <div>

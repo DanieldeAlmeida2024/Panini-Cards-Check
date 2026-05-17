@@ -51909,10 +51909,10 @@
       "code": "COCA-1",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 0,
+      "playerId": 865,
       "slot": 1,
-      "type": "SPECIAL",
-      "title": "Coca-Cola",
+      "type": "PLAYER",
+      "title": "Lamine Yamal",
       "scope": "COCA_COLA"
     },
     {
@@ -51920,10 +51920,10 @@
       "code": "COCA-2",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 865,
+      "playerId": 866,
       "slot": 2,
       "type": "PLAYER",
-      "title": "Lamine Yamal",
+      "title": "Joshua Kimmich",
       "scope": "COCA_COLA"
     },
     {
@@ -51931,10 +51931,10 @@
       "code": "COCA-3",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 866,
+      "playerId": 867,
       "slot": 3,
       "type": "PLAYER",
-      "title": "Joshua Kimmich",
+      "title": "Harry Kane",
       "scope": "COCA_COLA"
     },
     {
@@ -51942,10 +51942,10 @@
       "code": "COCA-4",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 867,
+      "playerId": 868,
       "slot": 4,
       "type": "PLAYER",
-      "title": "Harry Kane",
+      "title": "Santiago Giménez",
       "scope": "COCA_COLA"
     },
     {
@@ -51953,10 +51953,10 @@
       "code": "COCA-5",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 868,
+      "playerId": 869,
       "slot": 5,
       "type": "PLAYER",
-      "title": "Santiago Giménez",
+      "title": "Joško Gvardiol",
       "scope": "COCA_COLA"
     },
     {
@@ -51964,10 +51964,10 @@
       "code": "COCA-6",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 869,
+      "playerId": 870,
       "slot": 6,
       "type": "PLAYER",
-      "title": "Joško Gvardiol",
+      "title": "Federico Valverde",
       "scope": "COCA_COLA"
     },
     {
@@ -51975,10 +51975,10 @@
       "code": "COCA-7",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 870,
+      "playerId": 871,
       "slot": 7,
       "type": "PLAYER",
-      "title": "Federico Valverde",
+      "title": "Jefferson Lerma",
       "scope": "COCA_COLA"
     },
     {
@@ -51986,10 +51986,10 @@
       "code": "COCA-8",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 871,
+      "playerId": 872,
       "slot": 8,
       "type": "PLAYER",
-      "title": "Jefferson Lerma",
+      "title": "Enner Valencia",
       "scope": "COCA_COLA"
     },
     {
@@ -51997,10 +51997,10 @@
       "code": "COCA-9",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 872,
+      "playerId": 873,
       "slot": 9,
       "type": "PLAYER",
-      "title": "Enner Valencia",
+      "title": "Gabriel Magalhães",
       "scope": "COCA_COLA"
     },
     {
@@ -52008,10 +52008,10 @@
       "code": "COCA-10",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 873,
+      "playerId": 874,
       "slot": 10,
       "type": "PLAYER",
-      "title": "Gabriel Magalhães",
+      "title": "Virgil van Dijk",
       "scope": "COCA_COLA"
     },
     {
@@ -52019,10 +52019,10 @@
       "code": "COCA-11",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 874,
+      "playerId": 875,
       "slot": 11,
       "type": "PLAYER",
-      "title": "Virgil van Dijk",
+      "title": "Alphonso Davies",
       "scope": "COCA_COLA"
     },
     {
@@ -52030,10 +52030,10 @@
       "code": "COCA-12",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 875,
+      "playerId": 876,
       "slot": 12,
       "type": "PLAYER",
-      "title": "Alphonso Davies",
+      "title": "Emiliano Martínez",
       "scope": "COCA_COLA"
     },
     {
@@ -52041,10 +52041,10 @@
       "code": "COCA-13",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 876,
+      "playerId": 877,
       "slot": 13,
       "type": "PLAYER",
-      "title": "Emiliano Martínez",
+      "title": "Raúl Jiménez",
       "scope": "COCA_COLA"
     },
     {
@@ -52052,19 +52052,8 @@
       "code": "COCA-14",
       "albumPageId": 50,
       "countryId": 49,
-      "playerId": 877,
-      "slot": 14,
-      "type": "PLAYER",
-      "title": "Raúl Jiménez",
-      "scope": "COCA_COLA"
-    },
-    {
-      "id": 995,
-      "code": "COCA-15",
-      "albumPageId": 50,
-      "countryId": 49,
       "playerId": 878,
-      "slot": 15,
+      "slot": 14,
       "type": "PLAYER",
       "title": "Lautaro Martínez",
       "scope": "COCA_COLA"
@@ -52098,9 +52087,9 @@
       "note": "Preenche apenas campos ausentes quando a infobox publica da Wikipedia traz o dado."
     },
     "manualAlbumUpdates": {
-      "appliedAt": "2026-05-17T03:21:00.547Z",
+      "appliedAt": "2026-05-17T03:24:28.667Z",
       "filledPlayerInfo": 117,
-      "cocaColaCards": 15
+      "cocaColaCards": 14
     }
   },
   "conflicts": [],

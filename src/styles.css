@@ -835,7 +835,9 @@ select {
 
 .sticker-card.squad {
   grid-column: span 2;
-  aspect-ratio: 1.55;
+  justify-self: start;
+  width: min(100%, calc(((100% - 8px) / 2) / 0.66));
+  aspect-ratio: 1.515;
 }
 
 .country-card.is-coca {

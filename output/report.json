@@ -4,13 +4,13 @@
     "clubs": 405,
     "players": 878,
     "albumPages": 50,
-    "stickers": 995,
+    "stickers": 994,
     "conflicts": 0,
     "stickersByType": {
       "BADGE": 48,
       "PLAYER": 878,
       "SQUAD": 48,
-      "SPECIAL": 21
+      "SPECIAL": 20
     },
     "playersPerCountryMin": 18,
     "playersPerCountryMax": 18
