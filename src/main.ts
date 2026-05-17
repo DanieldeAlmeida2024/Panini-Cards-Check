@@ -150,7 +150,20 @@ const formatClub = (club?: Club) => {
   return club.name;
 };
 
-const flagUrl = (code: string) => `https://flagcdn.com/${FLAG_CODES[code] ?? code.toLowerCase()}.svg`;
+const cocaColaSvgUrl = () => {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280">
+      <rect width="480" height="280" rx="26" fill="#e41b17"/>
+      <circle cx="404" cy="56" r="82" fill="rgba(255,255,255,.12)"/>
+      <circle cx="78" cy="232" r="112" fill="rgba(0,0,0,.11)"/>
+      <path d="M61 139c0-45 31-79 76-79 27 0 49 12 62 32l-42 25c-5-8-12-13-22-13-17 0-28 14-28 35s11 35 28 35c10 0 18-5 22-14l42 25c-13 20-35 33-62 33-45 0-76-34-76-79Z" fill="#fff"/>
+      <text x="220" y="157" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="900" fill="#fff">Coca-Cola</text>
+      <text x="224" y="197" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="800" letter-spacing="3" fill="#fff">FIFA WORLD CUP 2026</text>
+    </svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+};
+
+const flagUrl = (code: string) => (code === "COCA" ? cocaColaSvgUrl() : `https://flagcdn.com/${FLAG_CODES[code] ?? code.toLowerCase()}.svg`);
 
 const playerMeta = (player?: Player, club?: Club) => {
   if (!player) return "";
@@ -438,9 +451,11 @@ const render = (data: AlbumData, collection: CollectionState, cardImages: CardIm
     0,
   );
   const missingStickers = baseStickers.filter((sticker) => !collection[String(sticker.id)]);
+  const countryTotal = countryStickers.length;
+  const albumTotal = baseStickers.length;
 
-  progress.textContent = `${selectedCountry.namePt}: ${ownedInCountry}/20 no album | ${repeatsInCountry} repetidas`;
-  if (totalOwned) totalOwned.textContent = `${ownedTotal}/960`;
+  progress.textContent = `${selectedCountry.namePt}: ${ownedInCountry}/${countryTotal} no album | ${repeatsInCountry} repetidas`;
+  if (totalOwned) totalOwned.textContent = `${ownedTotal}/${albumTotal}`;
   if (totalMissing) totalMissing.textContent = String(missingStickers.length);
   if (totalRepeats) totalRepeats.textContent = String(repeatsTotal);
   grid.innerHTML = "";
@@ -451,22 +466,24 @@ const render = (data: AlbumData, collection: CollectionState, cardImages: CardIm
     .filter((group) => visibleGroups.includes(group))
     .map((group) => {
       const countries = countriesForPicker.filter((country) => country.group === group);
+      const groupLabel = group === "Coca-Cola" ? "Coca-Cola" : `Grupo ${escapeHtml(group)}`;
       return `
         <div class="country-group-row">
-          <div class="group-row-title">Grupo ${escapeHtml(group)}</div>
+          <div class="group-row-title">${groupLabel}</div>
           <div class="country-row-scroll">
             ${countries
               .map((country) => {
                 const selected = country.id === selectedCountry.id;
+                const countryGroupLabel = country.group === "Coca-Cola" ? "Coca-Cola" : `Grupo ${escapeHtml(country.group)}`;
                 return `
                   <button
-                    class="country-card ${selected ? "is-active" : ""}"
+                    class="country-card ${country.code === "COCA" ? "is-coca" : ""} ${selected ? "is-active" : ""}"
                     type="button"
                     data-country-id="${country.id}"
                     style="--flag-url: url('${flagUrl(country.code)}')"
                     aria-pressed="${selected}"
                   >
-                    <span class="country-group">Grupo ${escapeHtml(country.group)}</span>
+                    <span class="country-group">${countryGroupLabel}</span>
                     <span class="country-name">${escapeHtml(country.namePt)}</span>
                     <strong>${escapeHtml(country.code)}</strong>
                   </button>

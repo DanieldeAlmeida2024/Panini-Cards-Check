@@ -1,16 +1,16 @@
 {
   "summary": {
-    "countries": 48,
-    "clubs": 360,
-    "players": 864,
-    "albumPages": 49,
-    "stickers": 980,
+    "countries": 49,
+    "clubs": 405,
+    "players": 878,
+    "albumPages": 50,
+    "stickers": 995,
     "conflicts": 0,
     "stickersByType": {
       "BADGE": 48,
-      "PLAYER": 864,
+      "PLAYER": 878,
       "SQUAD": 48,
-      "SPECIAL": 20
+      "SPECIAL": 21
     },
     "playersPerCountryMin": 18,
     "playersPerCountryMax": 18

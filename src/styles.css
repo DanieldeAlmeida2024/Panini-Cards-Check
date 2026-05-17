@@ -838,6 +838,24 @@ select {
   aspect-ratio: 1.55;
 }
 
+.country-card.is-coca {
+  border-color: rgba(255, 255, 255, 0.66);
+  background-color: #e41b17;
+}
+
+.country-card.is-coca .country-group {
+  color: #e41b17;
+}
+
+.country-card.is-coca strong {
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.36);
+}
+
+.sticker-card.special .player-svg text {
+  letter-spacing: 0;
+}
+
 .card-art {
   position: absolute;
   inset: 0;
