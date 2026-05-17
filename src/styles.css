@@ -173,6 +173,19 @@ input:focus {
   padding-block: 10px 8px;
 }
 
+.country-search {
+  display: grid;
+  gap: 5px;
+  padding: 0 10px 10px;
+}
+
+.country-search span {
+  color: #46615d;
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
 .country-cards {
   display: grid;
   gap: 12px;
@@ -292,6 +305,29 @@ input:focus {
   font-weight: 950;
   line-height: 1;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.34);
+}
+
+.country-toggle {
+  display: block;
+  width: calc(100% - 20px);
+  min-height: 40px;
+  margin: 0 10px 12px;
+  border: 1px solid rgba(13, 143, 133, 0.24);
+  border-radius: 8px;
+  background: rgba(13, 143, 133, 0.1);
+  color: #0d6f6a;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.country-toggle:hover,
+.country-toggle:focus-visible {
+  background: rgba(13, 143, 133, 0.16);
+  outline: none;
+}
+
+.country-toggle[hidden] {
+  display: none;
 }
 
 .sticker-grid {

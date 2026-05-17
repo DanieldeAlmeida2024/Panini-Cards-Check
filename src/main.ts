@@ -311,6 +311,8 @@ const render = (data: AlbumData, collection: CollectionState) => {
   const clubsById = new Map(data.clubs.map((club) => [club.id, club]));
   const shell = document.querySelector<HTMLElement>(".shell");
   const countryCards = document.querySelector<HTMLDivElement>("#countryCards");
+  const countrySearch = document.querySelector<HTMLInputElement>("#countrySearch");
+  const countryToggle = document.querySelector<HTMLButtonElement>("#countryToggle");
   const searchInput = document.querySelector<HTMLInputElement>("#searchInput");
   const grid = document.querySelector<HTMLDivElement>("#stickerGrid");
   const empty = document.querySelector<HTMLParagraphElement>("#emptyState");
@@ -322,6 +324,11 @@ const render = (data: AlbumData, collection: CollectionState) => {
   const missingCount = document.querySelector<HTMLSpanElement>("#missingCount");
   const selectedCountryId = Number(shell?.dataset.countryId || data.countries[0]?.id);
   const query = normalize(searchInput?.value ?? "");
+  const countryQuery = normalize(countrySearch?.value ?? "");
+  const countriesForPicker = data.countries.filter((country) => {
+    const haystack = normalize(`${country.namePt} ${country.nameEn} ${country.code} grupo ${country.group}`);
+    return !countryQuery || haystack.includes(countryQuery);
+  });
   const selectedCountry = countriesById.get(selectedCountryId) ?? data.countries[0];
 
   if (!grid || !empty || !progress || !selectedCountry || !missingList || !missingCount || !countryCards) return;
@@ -354,10 +361,13 @@ const render = (data: AlbumData, collection: CollectionState) => {
   if (totalMissing) totalMissing.textContent = String(missingStickers.length);
   if (totalRepeats) totalRepeats.textContent = String(repeatsTotal);
   grid.innerHTML = "";
-  const groups = [...new Set(data.countries.map((country) => country.group))];
+  const isExpanded = shell.dataset.countryPickerExpanded === "true";
+  const groups = [...new Set(countriesForPicker.map((country) => country.group))];
+  const visibleGroups = countryQuery || isExpanded ? groups : groups.slice(0, 3);
   countryCards.innerHTML = groups
+    .filter((group) => visibleGroups.includes(group))
     .map((group) => {
-      const countries = data.countries.filter((country) => country.group === group);
+      const countries = countriesForPicker.filter((country) => country.group === group);
       return `
         <div class="country-group-row">
           <div class="group-row-title">Grupo ${escapeHtml(group)}</div>
@@ -385,6 +395,13 @@ const render = (data: AlbumData, collection: CollectionState) => {
       `;
     })
     .join("");
+
+  if (countryToggle) {
+    const hiddenGroups = Math.max(groups.length - visibleGroups.length, 0);
+    countryToggle.hidden = Boolean(countryQuery) || groups.length <= 3;
+    countryToggle.textContent = isExpanded ? "Mostrar menos" : `Mostrar mais ${hiddenGroups} grupos`;
+    countryToggle.setAttribute("aria-expanded", String(isExpanded));
+  }
   empty.hidden = visibleStickers.length > 0;
   missingCount.textContent = String(missingStickers.length);
 
@@ -468,7 +485,12 @@ const init = async () => {
             <h2>Selecoes</h2>
           </div>
         </div>
+        <label class="country-search">
+          <span>Buscar selecao</span>
+          <input id="countrySearch" type="search" placeholder="Pais ou sigla" autocomplete="off" />
+        </label>
         <div class="country-cards" id="countryCards"></div>
+        <button class="country-toggle" id="countryToggle" type="button" aria-expanded="false">Mostrar mais</button>
       </section>
 
       <section class="sticker-grid" id="stickerGrid" aria-live="polite"></section>
@@ -493,11 +515,19 @@ const init = async () => {
   const grid = document.querySelector<HTMLDivElement>("#stickerGrid");
   const shell = document.querySelector<HTMLElement>(".shell");
   const countryCards = document.querySelector<HTMLDivElement>("#countryCards");
+  const countrySearch = document.querySelector<HTMLInputElement>("#countrySearch");
+  const countryToggle = document.querySelector<HTMLButtonElement>("#countryToggle");
 
-  if (!searchInput || !grid || !shell || !countryCards) return;
+  if (!searchInput || !grid || !shell || !countryCards || !countrySearch || !countryToggle) return;
 
   shell.dataset.countryId = String(data.countries[0]?.id ?? 1);
+  shell.dataset.countryPickerExpanded = "false";
   searchInput.addEventListener("input", () => render(data, collection));
+  countrySearch.addEventListener("input", () => render(data, collection));
+  countryToggle.addEventListener("click", () => {
+    shell.dataset.countryPickerExpanded = shell.dataset.countryPickerExpanded === "true" ? "false" : "true";
+    render(data, collection);
+  });
   countryCards.addEventListener("click", (event) => {
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>(".country-card");
     if (!button?.dataset.countryId) return;
