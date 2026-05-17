@@ -630,6 +630,9 @@ const changeQuantity = (collection: CollectionState, stickerId: string, nextQuan
   writeCollection(collection);
 };
 
+const confirmCardRemoval = () =>
+  window.confirm("Deseja remover esta figurinha da sua lista de possuidas?");
+
 const init = async () => {
   app.innerHTML = `
     <main class="shell">
@@ -919,6 +922,7 @@ const init = async () => {
     } else if (target.matches(".minus")) {
       changeQuantity(collection, stickerId, current - 1);
     } else {
+      if (current > 0 && !confirmCardRemoval()) return;
       changeQuantity(collection, stickerId, current > 0 ? 0 : 1);
     }
 
@@ -932,6 +936,7 @@ const init = async () => {
     event.preventDefault();
     const stickerId = card.dataset.stickerId;
     const current = collection[stickerId] ?? 0;
+    if (current > 0 && !confirmCardRemoval()) return;
     changeQuantity(collection, stickerId, current > 0 ? 0 : 1);
     render(data, collection, cardImages);
   });
