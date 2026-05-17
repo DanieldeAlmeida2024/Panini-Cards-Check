@@ -865,6 +865,11 @@ select {
   filter: saturate(1.04) contrast(1.03);
 }
 
+.squad.has-manual-image .manual-card-image {
+  object-fit: contain;
+  background: #07150f;
+}
+
 .card-art.has-photo .player-svg {
   opacity: 0;
 }
