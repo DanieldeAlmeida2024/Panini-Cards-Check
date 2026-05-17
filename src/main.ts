@@ -53,6 +53,7 @@ type AlbumData = {
 };
 
 type CollectionState = Record<string, number>;
+type CardImageManifest = Record<string, string>;
 type ExportPayload = {
   app: "panini-world-cup-2026-album";
   version: 1;
@@ -252,23 +253,36 @@ const loadAlbum = async (): Promise<AlbumData> => {
   return response.json();
 };
 
+const loadCardImages = async (): Promise<CardImageManifest> => {
+  try {
+    const response = await fetch("/images-cards/manifest.json");
+    if (!response.ok) return {};
+    return response.json();
+  } catch {
+    return {};
+  }
+};
+
 const buildCard = ({
   sticker,
   country,
   player,
   club,
   quantity,
+  manualImageUrl,
 }: {
   sticker: Sticker;
   country: Country;
   player?: Player;
   club?: Club;
   quantity: number;
+  manualImageUrl?: string;
 }) => {
   const owned = quantity > 0;
   const repeatCount = Math.max(quantity - 1, 0);
+  const hasManualImage = Boolean(manualImageUrl);
   const card = document.createElement("article");
-  card.className = `sticker-card ${owned ? "is-owned" : ""} ${sticker.type.toLowerCase()}`;
+  card.className = `sticker-card ${owned ? "is-owned" : ""} ${hasManualImage ? "has-manual-image" : ""} ${sticker.type.toLowerCase()}`;
   card.tabIndex = 0;
   card.setAttribute("role", "button");
   card.setAttribute("aria-pressed", String(owned));
@@ -285,7 +299,13 @@ const buildCard = ({
 
   card.innerHTML = `
     <div class="card-art ${player?.media?.found ? "has-photo" : ""}" aria-hidden="true">
-      ${player?.media?.found ? `<img class="player-photo" src="${escapeHtml(player.media.thumbnailUrl || player.media.imageUrl)}" alt="${escapeHtml(title)}" loading="lazy" onerror="this.remove()" />` : ""}
+      ${
+        manualImageUrl
+          ? `<img class="manual-card-image" src="${escapeHtml(manualImageUrl)}" alt="${escapeHtml(title)}" loading="lazy" />`
+          : player?.media?.found
+            ? `<img class="player-photo" src="${escapeHtml(player.media.thumbnailUrl || player.media.imageUrl)}" alt="${escapeHtml(title)}" loading="lazy" onerror="this.remove()" />`
+            : ""
+      }
       ${stickerSvg(sticker, country, title)}
     </div>
     <div class="card-topline">
@@ -293,7 +313,7 @@ const buildCard = ({
     </div>
     <div class="background-number" aria-hidden="true">${String(sticker.slot).padStart(2, "0")}</div>
     <div class="country-chip">${escapeHtml(country.code)}</div>
-    <div class="card-copy">
+    <div class="card-copy" ${hasManualImage ? "hidden" : ""}>
       <h2>${escapeHtml(title)}</h2>
       <p>${escapeHtml(meta)}</p>
     </div>
@@ -367,7 +387,7 @@ const getStickerDetails = (
   return { country, player, club, title, details };
 };
 
-const render = (data: AlbumData, collection: CollectionState) => {
+const render = (data: AlbumData, collection: CollectionState, cardImages: CardImageManifest) => {
   const countriesById = new Map(data.countries.map((country) => [country.id, country]));
   const playersById = new Map(data.players.map((player) => [player.id, player]));
   const clubsById = new Map(data.clubs.map((club) => [club.id, club]));
@@ -480,6 +500,7 @@ const render = (data: AlbumData, collection: CollectionState) => {
         player,
         club,
         quantity: collection[String(sticker.id)] ?? 0,
+        manualImageUrl: cardImages[sticker.code],
       }),
     );
   }
@@ -596,6 +617,7 @@ const init = async () => {
   `;
 
   const data = await loadAlbum();
+  const cardImages = await loadCardImages();
   const collection = readCollection();
   const searchInput = document.querySelector<HTMLInputElement>("#searchInput");
   const grid = document.querySelector<HTMLDivElement>("#stickerGrid");
@@ -651,7 +673,7 @@ const init = async () => {
         for (const key of Object.keys(collection)) delete collection[key];
         Object.assign(collection, imported);
         writeCollection(collection);
-        render(data, collection);
+        render(data, collection, cardImages);
         return;
       }
 
@@ -671,17 +693,17 @@ const init = async () => {
       window.alert("Nao foi possivel ler esse JSON.");
     }
   });
-  searchInput.addEventListener("input", () => render(data, collection));
-  countrySearch.addEventListener("input", () => render(data, collection));
+  searchInput.addEventListener("input", () => render(data, collection, cardImages));
+  countrySearch.addEventListener("input", () => render(data, collection, cardImages));
   countryToggle.addEventListener("click", () => {
     shell.dataset.countryPickerExpanded = shell.dataset.countryPickerExpanded === "true" ? "false" : "true";
-    render(data, collection);
+    render(data, collection, cardImages);
   });
   countryCards.addEventListener("click", (event) => {
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>(".country-card");
     if (!button?.dataset.countryId) return;
     shell.dataset.countryId = button.dataset.countryId;
-    render(data, collection);
+    render(data, collection, cardImages);
     button.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   });
 
@@ -701,7 +723,7 @@ const init = async () => {
       changeQuantity(collection, stickerId, current > 0 ? 0 : 1);
     }
 
-    render(data, collection);
+    render(data, collection, cardImages);
   });
 
   grid.addEventListener("keydown", (event) => {
@@ -712,10 +734,10 @@ const init = async () => {
     const stickerId = card.dataset.stickerId;
     const current = collection[stickerId] ?? 0;
     changeQuantity(collection, stickerId, current > 0 ? 0 : 1);
-    render(data, collection);
+    render(data, collection, cardImages);
   });
 
-  render(data, collection);
+  render(data, collection, cardImages);
 };
 
 init().catch((error: unknown) => {
