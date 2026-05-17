@@ -418,6 +418,8 @@ const render = (data: AlbumData, collection: CollectionState, cardImages: CardIm
   const totalRepeats = document.querySelector<HTMLDivElement>("#totalRepeats");
   const missingList = document.querySelector<HTMLDivElement>("#missingList");
   const missingCount = document.querySelector<HTMLSpanElement>("#missingCount");
+  const repeatsList = document.querySelector<HTMLDivElement>("#repeatsList");
+  const repeatsCount = document.querySelector<HTMLSpanElement>("#repeatsCount");
   const selectedCountryId = Number(shell?.dataset.countryId || data.countries[0]?.id);
   const query = normalize(searchInput?.value ?? "");
   const countryQuery = normalize(countrySearch?.value ?? "");
@@ -427,7 +429,7 @@ const render = (data: AlbumData, collection: CollectionState, cardImages: CardIm
   });
   const selectedCountry = countriesById.get(selectedCountryId) ?? data.countries[0];
 
-  if (!grid || !empty || !progress || !selectedCountry || !missingList || !missingCount || !countryCards) return;
+  if (!grid || !empty || !progress || !selectedCountry || !missingList || !missingCount || !repeatsList || !repeatsCount || !countryCards) return;
 
   const countryStickers = data.stickers
     .filter((sticker) => sticker.countryId === selectedCountry.id)
@@ -451,6 +453,9 @@ const render = (data: AlbumData, collection: CollectionState, cardImages: CardIm
     0,
   );
   const missingStickers = baseStickers.filter((sticker) => !collection[String(sticker.id)]);
+  const repeatedStickers = baseStickers
+    .map((sticker) => ({ sticker, repeats: Math.max((collection[String(sticker.id)] ?? 0) - 1, 0) }))
+    .filter((item) => item.repeats > 0);
   const countryTotal = countryStickers.length;
   const albumTotal = baseStickers.length;
 
@@ -504,6 +509,7 @@ const render = (data: AlbumData, collection: CollectionState, cardImages: CardIm
   }
   empty.hidden = visibleStickers.length > 0;
   missingCount.textContent = String(missingStickers.length);
+  repeatsCount.textContent = String(repeatsTotal);
 
   for (const sticker of visibleStickers) {
     const country = countriesById.get(sticker.countryId);
@@ -535,6 +541,22 @@ const render = (data: AlbumData, collection: CollectionState, cardImages: CardIm
       `;
     })
     .join("");
+
+  repeatsList.innerHTML = repeatedStickers.length
+    ? repeatedStickers
+        .map(({ sticker, repeats }) => {
+          const { country, title, details } = getStickerDetails(sticker, countriesById, playersById, clubsById);
+          return `
+            <article class="missing-row repeat-row">
+              <strong>${escapeHtml(sticker.code)}</strong>
+              <span>${escapeHtml(title)}</span>
+              <small>${escapeHtml([country?.namePt, details].filter(Boolean).join(" | "))}</small>
+              <em>${escapeHtml(repeats)}x</em>
+            </article>
+          `;
+        })
+        .join("")
+    : `<p class="list-empty">Nenhuma figurinha repetida marcada.</p>`;
 };
 
 const changeQuantity = (collection: CollectionState, stickerId: string, nextQuantity: number) => {
@@ -619,6 +641,17 @@ const init = async () => {
           <span><b id="missingCount">960</b> faltando</span>
         </div>
         <div class="missing-list" id="missingList"></div>
+      </section>
+
+      <section class="missing-section repeat-section" aria-label="Cartas repetidas">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Trocas e sobras</p>
+            <h2>Figurinhas repetidas</h2>
+          </div>
+          <span><b id="repeatsCount">0</b> repetidas</span>
+        </div>
+        <div class="missing-list repeat-list" id="repeatsList"></div>
       </section>
 
       <dialog class="compare-modal" id="compareModal">
