@@ -1,3 +1,24 @@
+# Panini-Cards-Check
+
+Aplicativo web mobile-first para acompanhar figurinhas do álbum Copa 2026.
+
+## Tecnologias e organização
+Vite, TypeScript, Python, localStorage. Código e configurações principais: `package.json, public/data/, panini_album/`.
+
+## Começar
+npm ci && npm run dev
+
+**Validação nativa:** `npm run build`. Não afirmar sucesso sem executar o procedimento com as dependências necessárias.
+
+## Cuidados
+Dados locais do navegador não são sincronizados. Validar fonte e integridade das imagens/dados.
+
+**Documentação técnica:** [Requisitos](docs/REQUISITOS.md) · [Arquitetura](docs/ARQUITETURA.md) · [UML](docs/UML.puml) · [Plano de testes](docs/PLANO_TESTES.md) · [Guia para IA](AGENTS.md).
+
+---
+
+## Conteúdo anterior do repositório (preservado)
+
 # Panini Cards Check
 
 Aplicacao web mobile-first para gerenciar as figurinhas do album Panini da Copa do Mundo 2026.
