@@ -82,3 +82,11 @@ O service worker anterior cacheava a página e JSON, mas **não pré-cacheava o 
 - [CI #43118864151](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43118864151): **PAN-PWA01 aprovado** — instalou service worker, comprovou cache do JS/CSS e recarregou o álbum offline preservando a figurinha.
 - **PAN-PWA02 falhou apenas no teste**: a constante `const URL = ...` do Node sombreava o construtor global `URL`, resultando em `TypeError: URL is not a constructor`, sem evidenciar falha de cache.
 - Revisão do teste: renomeada a constante para `BASE_URL`, preservando `new URL(...)` para validar a origem. **O novo HEAD precisa passar novamente no CI** para confirmar ambos os cenários.
+
+
+### Evidência de execução da revisão 1.4.0
+- [CI de PWA #43119338415](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43119338415): **PAN-PWA01/02 PASS (2/2)**. O Chromium carregou build Vite, confirmou JS/CSS no cache e abriu o álbum offline com figura preservada. O teste de isolamento de origem também passou após renomear `URL` para `BASE_URL`.
+- [Testes Chromium #43119338356](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43119338356) e [typecheck/Vite #43119338546](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43119338546) também **success**.
+- Ainda faltam Safari/iOS, armazenamento sob quota e imagens externas offline; nenhum deploy.
+
+O SHA do commit documental posterior deve voltar a passar no CI antes do merge.
