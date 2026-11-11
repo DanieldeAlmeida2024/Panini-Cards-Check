@@ -58,3 +58,10 @@ npm run build
 ```bash
 npm run preview
 ```
+
+## Documentação técnica versionada
+
+- [Especificação e análise de domínio](docs/projeto/ESPECIFICACAO.md)
+- [Diagramas UML editáveis](docs/uml/README.md)
+- [Plano de testes](docs/testes/PLANO_DE_TESTES.md)
+- [Controle de versões](docs/controle/VERSIONAMENTO.md)

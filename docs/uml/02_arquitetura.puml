@@ -1,0 +1,15 @@
+@startuml
+actor "Colecionador" as U
+component "DOM / UI em src/main.ts" as UI
+file "/data/panini_world_cup_2026.json" as Data
+file "/images-cards/manifest.json" as Images
+database "localStorage\ncollection-v1" as Storage
+component "Fallback SVG" as SVG
+component "Service Worker" as SW
+U --> UI
+UI --> Data : fetch
+UI --> Images : fetch opcional
+UI --> Storage : read/write
+UI --> SVG : quando imagem ausente
+UI ..> SW : register /sw.js
+@enduml

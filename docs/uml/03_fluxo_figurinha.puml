@@ -1,0 +1,13 @@
+@startuml
+actor Colecionador
+participant "Card DOM" as Card
+participant "CollectionState" as State
+database localStorage
+Colecionador -> Card : selecionar figurinha
+Card -> State : incrementar / decrementar quantidade
+State -> localStorage : setItem(collection-v1)
+Card -> Card : atualizar owned e repetidas
+Colecionador -> Card : recarregar página
+Card -> localStorage : getItem(collection-v1)
+localStorage --> Card : quantidades
+@enduml
