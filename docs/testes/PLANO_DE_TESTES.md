@@ -80,3 +80,11 @@ Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem
 - **Novo teste 2:** Espaço no cartão marca quantidade 1 e mantém foco.
 - **Critério de rejeição:** não confundir `keydown` propagado de botão interno com acionamento da `.sticker-card`; o navegador já gera `click` de botões nativos.
 - **Evidência:** registrar run Chromium do HEAD do PR. Teste de leitor de tela, tab order completo e navegação por modais ainda pendentes.
+
+
+### Evidência verificada no CI da revisão 1.3.0
+
+- [GitHub Actions #43116494337](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43116494337): **6/6 PASS**. Seis cenários Chromium aprovados, incluindo os dois testes PAN-15 de Enter/Espaço e preservação de foco; typecheck e Vite aprovados no job separado.
+- [TypeScript e Vite #43116494356](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43116494356): **success**.
+- Commit de código testado: `ff9304a02d3b85b8f639df4ac12b717c876e00a1`. Documentação adicionada depois do run; novo HEAD deverá manter os mesmos gates verdes antes do merge.
+- Sem deploy; CI não substitui testes de segurança/rede/ambiente real fora do escopo.

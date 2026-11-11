@@ -60,3 +60,11 @@ O proprietário retirou o projeto correspondente da Vercel. O status legado `Ver
 | **1.3.0 proposta** | `fix/keyboard-sticker-repeat-20261111` | Corrigir propagação `keydown` entre cartão e controles internos, preservar foco; novos E2E PAN-15 pendentes de CI |
 
 **Não alterar** o schema JSON v1 nem o armazenamento da coleção. A correção se limita à interação de teclado. Nenhuma implantação web.
+
+
+### Evidência verificada no CI da revisão 1.3.0
+
+- [GitHub Actions #43116494337](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43116494337): **6/6 PASS**. Seis cenários Chromium aprovados, incluindo os dois testes PAN-15 de Enter/Espaço e preservação de foco; typecheck e Vite aprovados no job separado.
+- [TypeScript e Vite #43116494356](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43116494356): **success**.
+- Commit de código testado: `ff9304a02d3b85b8f639df4ac12b717c876e00a1`. Documentação adicionada depois do run; novo HEAD deverá manter os mesmos gates verdes antes do merge.
+- Sem deploy; CI não substitui testes de segurança/rede/ambiente real fora do escopo.
