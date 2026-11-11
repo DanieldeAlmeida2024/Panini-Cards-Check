@@ -68,3 +68,10 @@ O proprietário retirou o projeto correspondente da Vercel. O status legado `Ver
 - [TypeScript e Vite #43116494356](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43116494356): **success**.
 - Commit de código testado: `ff9304a02d3b85b8f639df4ac12b717c876e00a1`. Documentação adicionada depois do run; novo HEAD deverá manter os mesmos gates verdes antes do merge.
 - Sem deploy; CI não substitui testes de segurança/rede/ambiente real fora do escopo.
+
+
+## 1.4.0 proposta — primeiro acesso offline no build de produção
+
+A versão documental 1.3.0 foi integrada pelo [PR #5](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/pull/5), squash `474304738e04eb1ba3941da71b1533e18ccc1246`, com 6/6 testes Chromium e gates TypeScript/Vite aprovados.
+
+O service worker anterior cacheava a página e JSON, mas **não pré-cacheava o bundle JS/CSS com hash do Vite**, impedindo garantir o primeiro acesso offline após uma instalação bem-sucedida. A branch `fix/pwa-offline-bundle-cache-20261111` introduz descoberta do JS/CSS pelo HTML gerado, cache transacional durante instalação, versão de cache v2, limpeza apenas dos caches próprios e fallback de navegação. CI usa build real de produção e Playwright em modo offline. **Evidência pendente até executar o workflow.** Não foi realizado deploy.

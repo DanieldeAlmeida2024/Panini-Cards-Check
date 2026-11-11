@@ -1,0 +1,26 @@
+@startuml
+title Panini — build Vite preparado para primeiro acesso offline
+actor "Navegador" as Client
+participant "Service Worker v2" as SW
+participant "Build / index.html" as HTML
+database "CacheStorage panini v2" as Cache
+database "localStorage" as Local
+Client -> SW : install()
+SW -> HTML : buscar index.html gerado
+HTML --> SW : scripts/css /assets com hash
+SW -> Cache : addAll(app shell, JS, CSS, JSON, ícones)
+SW -> Client : skipWaiting/claim
+Client -> Local : salvar figurinha
+Client -> Client : desligar rede
+Client -> SW : navigation GET /
+SW -> Cache : fallback /
+Cache --> Client : HTML
+Client -> SW : GET bundle JS/CSS e dados JSON
+SW -> Cache : arquivos precacheados
+Cache --> Client : resposta offline
+Local --> Client : coleção preservada
+note bottom
+Não inclui garantia offline para imagens externas/CDN.
+Testar Chromium com Vite preview build; sem deploy.
+end note
+@enduml

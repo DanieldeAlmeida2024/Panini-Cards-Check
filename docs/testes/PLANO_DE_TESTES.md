@@ -88,3 +88,13 @@ Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem
 - [TypeScript e Vite #43116494356](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43116494356): **success**.
 - Commit de código testado: `ff9304a02d3b85b8f639df4ac12b717c876e00a1`. Documentação adicionada depois do run; novo HEAD deverá manter os mesmos gates verdes antes do merge.
 - Sem deploy; CI não substitui testes de segurança/rede/ambiente real fora do escopo.
+
+
+## PAN-PWA01/02 — testes E2E reais de primeiro uso offline
+
+| ID | Prova automatizada | Resultado inicial |
+|---|---|---|
+| PAN-PWA01 | Vite build → Chromium controlado por SW → JS/CSS e JSON em CacheStorage → desligar rede → reload renderiza álbum e figura selecionada | Aguardando CI |
+| PAN-PWA02 | Cache de aplicação contém somente URLs de **mesma origem** | Aguardando CI |
+
+O novo workflow `.github/workflows/offline-pwa.yml` executa em `localhost:4174` e não publica aplicação na Vercel nem em outro provedor. Os seis testes de navegador e os testes unitários existentes permanecem em workflows separados. Escopo não inclui instalação real no Android/iOS ou flags CDN offline.
