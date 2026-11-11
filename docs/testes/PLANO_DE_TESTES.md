@@ -1,6 +1,6 @@
 # Plano de testes — álbum de figurinhas Copa 2026
 
-> **PAN — documentação v1.0.0** · 11/11/2026 · revisão do código `99e3b3c60af763b54020fc2e994adf97eb2030dd`.
+> **PAN — documentação v1.1.0 proposta** · 11/11/2026 · revisão do código `99e3b3c60af763b54020fc2e994adf97eb2030dd`.
 
 
 ## Ferramentas e evidência existente
@@ -31,3 +31,23 @@ npm run build
 npm run preview
 ```
 Executar testes interativos em Chrome e Firefox no ambiente local antes do deploy, capturando screenshots, estado inicial e dados de teste. Não carregar figurinhas reais no navegador de testes do usuário. Nenhum dos cenários PAN-01–PAN-15 deve ser marcado PASS apenas por análise estática.
+
+
+## Testes automatizados acrescentados — v1.1.0 proposta
+
+Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem DOM. O contrato é coberto por:
+
+| Caso original | Verificação implementada | Limite de interpretação |
+|---|---|---|
+| PAN-04 | Carregamento de JSON persistido filtra IDs obsoletos | Teste de função; persistência real no navegador pendente |
+| PAN-05 | Formatos legado e exportado seguem aceitos | Sem teste de upload por elemento HTML |
+| PAN-06 | Negativos, zeros, texto, booleano, `Infinity` e decimais inválidos não entram | Quantidade >0 truncada dentro de limites seguros |
+| PAN-14 | `__proto__`, `constructor`, IDs falsos/fora do catálogo não contaminam estado | Escape HTML em DOM continua exigindo Playwright |
+
+**Gates:** `npm ci` → `npm run typecheck` → `npm run test:unit` → `npm run build` usando Node 22 em `.github/workflows/verify.yml`. O último SHA da branch precisa apresentar checks success no GitHub. Os casos browser PAN-01..03/07..13/15 continuam sem E2E e devem ser mantidos como planejados.
+
+
+**Correção de compilação detectada pelo gate:** a primeira execução CI #43110702702 falhou no `tsc --noEmit` por elemento shell opcional e tipo incompleto de Navigator. O patch introduz verificação explícita de `shell` e `Navigator & {standalone?:boolean}`; aguarda rerun no HEAD. Isso demonstra por que somente `vite build` não bastava.
+
+
+**Resultado verificado:** [run #43110961065](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43110961065), Node 22, job de verificação **success**. O teste de `normalizeCollection` foi executado; typecheck e build passaram. Ainda faltam os critérios de interface e PWA em navegador real. O check separado **Vercel Preview Comments** não comprova publicação.

@@ -1,0 +1,28 @@
+name: Panini - TypeScript, coleção e build
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verificar TypeScript, estado e Vite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Instalar dependências travadas
+        run: npm ci
+      - name: TypeScript strict
+        run: npm run typecheck
+      - name: Regressão de coleção e importação
+        run: npm run test:unit
+      - name: Build da aplicação
+        run: npm run build

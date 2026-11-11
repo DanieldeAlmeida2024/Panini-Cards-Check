@@ -1,0 +1,28 @@
+@startuml
+title Panini-Cards-Check — validação do estado e importação (1.1.0 proposta)
+actor "Colecionador" as User
+participant "src/main.ts" as UI
+database "Catálogo JSON stickers" as Catalog
+participant "collection-state.ts" as Normalize
+collections "localStorage" as Storage
+UI -> Catalog : carregar país/itens
+Catalog --> UI : stickers[].id
+UI -> UI : allowedStickerIds = Set(ids)
+UI -> Storage : getItem(chave v1)
+Storage --> UI : JSON antigo ou versionado
+UI -> Normalize : normalizeCollection(payload, allowedIds)
+Normalize -> Normalize : validar objeto e versão de estrutura
+Normalize -> Normalize : remover IDs alheios e chaves especiais
+Normalize -> Normalize : validar número finito e inteiro após truncar
+Normalize --> UI : Record<id,quantidade> sanitizado
+User -> UI : Importar arquivo JSON
+UI -> Normalize : normalizeCollection(arquivo, allowedIds)
+Normalize --> UI : coleção sanitizada
+UI -> Storage : setItem(JSON atualizado)
+UI --> User : atualizar contadores e cards
+note bottom
+Arquivo exportado continua version=1.
+CI roda tsc strict + Node unit + Vite build.
+Browser E2E, quota do storage e PWA offline pendentes.
+end note
+@enduml
