@@ -43,3 +43,6 @@ A coleção fica apenas neste navegador/dispositivo; não há sincronização ne
 
 
 **Compatibilidade entre DOM e TypeScript:** a renderização testa a existência do elemento `.shell` antes de ler `dataset`. O campo iOS Safari `navigator.standalone` não faz parte do `Navigator` universal, portanto é lido como propriedade opcional de interface estendida (com fallback pelo `matchMedia`). O tipo correto não altera o funcionamento do botão PWA em navegadores sem a extensão.
+
+
+**Evidência:** [CI #43110961065](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43110961065) validou TypeScript estrito, função de importação e Vite; o primeiro run #43110702702 havia revelado duas falhas de tipagem e motivou a correção de `.shell` nulo e de `Navigator.standalone` opcional. Isso não executa navegador/PWA reais.

@@ -48,3 +48,6 @@ Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem
 
 
 **Correção de compilação detectada pelo gate:** a primeira execução CI #43110702702 falhou no `tsc --noEmit` por elemento shell opcional e tipo incompleto de Navigator. O patch introduz verificação explícita de `shell` e `Navigator & {standalone?:boolean}`; aguarda rerun no HEAD. Isso demonstra por que somente `vite build` não bastava.
+
+
+**Resultado verificado:** [run #43110961065](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43110961065), Node 22, job de verificação **success**. O teste de `normalizeCollection` foi executado; typecheck e build passaram. Ainda faltam os critérios de interface e PWA em navegador real. O check separado **Vercel Preview Comments** não comprova publicação.
