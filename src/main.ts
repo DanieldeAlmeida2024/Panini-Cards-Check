@@ -911,18 +911,28 @@ const init = async () => {
     }
 
     render(data, collection, cardImages);
+    // O navegador dispara click nativo para botões ativados por teclado;
+    // preservar o foco neles após o re-render sem roubá-lo do mouse.
+    if (event.detail === 0 && (target.matches(".plus") || target.matches(".minus"))) {
+      grid.querySelector<HTMLElement>(
+        `.sticker-card[data-sticker-id="${stickerId}"] .repeat-btn.${target.matches(".plus") ? "plus" : "minus"}`
+      )?.focus();
+    }
   });
 
   grid.addEventListener("keydown", (event) => {
     if (event.key !== "Enter" && event.key !== " ") return;
     const card = (event.target as HTMLElement).closest<HTMLElement>(".sticker-card");
-    if (!card?.dataset.stickerId) return;
+    if (!card?.dataset.stickerId || event.target !== card) return;
+    // Apenas o próprio cartão ativa o toggle: keydown dos botões internos
+    // não deve trocar o estado antes do click nativo do botão.
     event.preventDefault();
     const stickerId = card.dataset.stickerId;
     const current = collection[stickerId] ?? 0;
     if (current > 0 && !confirmCardRemoval()) return;
     changeQuantity(collection, stickerId, current > 0 ? 0 : 1);
     render(data, collection, cardImages);
+    grid.querySelector<HTMLElement>(`.sticker-card[data-sticker-id="${stickerId}"]`)?.focus();
   });
 
   render(data, collection, cardImages);

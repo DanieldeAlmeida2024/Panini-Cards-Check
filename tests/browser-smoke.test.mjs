@@ -92,3 +92,38 @@ test("PAN-12: exporta JSON com quantidade, formato e versão 1", async (t) => {
   assert.equal(payload.collection[id], 1);
   assert.ok(!Number.isNaN(Date.parse(payload.exportedAt)));
 });
+
+
+test("PAN-15: Enter no card alterna uma vez, sem roubar a ativação do botão +", async (t) => {
+  const page = await pageFixture(t);
+  const { id } = await firstSticker(page);
+  assert.ok(id);
+  const card = page.locator('.sticker-card[data-sticker-id="' + id + '"]');
+  await card.focus();
+  await page.keyboard.press("Enter");
+  await persisted(page, id, 1);
+  assert.equal(await card.getAttribute("aria-pressed"), "true");
+  assert.equal(await card.evaluate((el) => el === document.activeElement), true);
+
+  const plus = card.locator(".repeat-btn.plus");
+  await plus.focus();
+  await page.keyboard.press("Enter");
+  await persisted(page, id, 2);
+  assert.equal((await card.locator(".repeat-count").textContent())?.trim(), "1");
+  assert.equal(await card.getAttribute("aria-pressed"), "true");
+  assert.equal(await card.locator(".repeat-btn.plus").evaluate((el) => el === document.activeElement), true);
+
+  await page.keyboard.press("Space");
+  await persisted(page, id, 3);
+  assert.equal((await card.locator(".repeat-count").textContent())?.trim(), "2");
+});
+
+test("PAN-15: Espaço no card alterna somente o cartão e mantém foco", async (t) => {
+  const page = await pageFixture(t);
+  const { id } = await firstSticker(page);
+  const card = page.locator('.sticker-card[data-sticker-id="' + id + '"]');
+  await card.focus();
+  await page.keyboard.press("Space");
+  await persisted(page, id, 1);
+  assert.equal(await card.evaluate((el) => el === document.activeElement), true);
+});

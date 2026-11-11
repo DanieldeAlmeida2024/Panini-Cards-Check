@@ -1,0 +1,26 @@
+@startuml
+title Panini — acionamento teclado e foco após re-render (v1.3.0 proposta)
+actor "Teclado" as User
+participant "Botão +/−" as Btn
+participant "Card .sticker-card" as Card
+participant "Grid keydown" as Key
+participant "Grid click" as Click
+participant "render()" as Render
+alt foco no card e Enter/Espaço
+ User -> Card : keydown
+ Card -> Key : target === card
+ Key -> Render : toggle de figurinha
+ Render -> Card : reconstituir DOM e restaurar foco
+else foco no botão interno e Enter/Espaço
+ User -> Btn : keydown
+ Btn -> Key : bubbling (target !== card)
+ Key --> Btn : não efetuar toggle
+ Btn -> Click : click nativo do botão
+ Click -> Render : incrementar/decrementar repetidas
+ Render -> Btn : restaurar foco do botão
+end
+note bottom
+Controle acionado por mouse não deve receber foco forçado.
+Teste Chromium exercita Enter e Espaço em ambas as superfícies.
+end note
+@enduml
