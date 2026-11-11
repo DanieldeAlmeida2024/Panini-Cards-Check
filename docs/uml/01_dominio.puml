@@ -1,0 +1,16 @@
+@startuml
+class Country { id; group; code; namePt; nameEn }
+class Club { id; name; country }
+class Player { id; name; countryId; clubId; position; media? }
+class Sticker { id; code; countryId; playerId; slot; type }
+class AlbumData { countries[]; clubs[]; players[]; stickers[] }
+class CollectionState <<Record<stickerId,quantity>>> 
+AlbumData o-- Country
+AlbumData o-- Club
+AlbumData o-- Player
+AlbumData o-- Sticker
+Sticker --> Player : jogador opcional
+Sticker --> Country
+Player --> Club
+CollectionState --> Sticker : quantidade registrada
+@enduml
