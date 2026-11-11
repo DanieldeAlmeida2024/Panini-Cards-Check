@@ -1,0 +1,26 @@
+@startuml
+title Panini-Cards-Check — testes de navegador, sem deploy (1.2.0 proposta)
+actor "CI GitHub Actions" as CI
+participant "Vite dev localhost" as Vite
+participant "Chromium Playwright" as Browser
+database "LocalStorage do contexto isolado" as Storage
+collections "Arquivo JSON baixado/importado" as Json
+CI -> Vite : iniciar servidor localhost:4173
+CI -> Browser : abrir página e aguardar card
+Browser -> Vite : buscar catálogo de figurinhas
+Vite --> Browser : JSON do álbum
+Browser -> Browser : clicar figurinha e adicionar repetida
+Browser -> Storage : guardar quantidade por ID
+Browser -> Browser : reload
+Storage --> Browser : normalizar coleção e restaurar card
+Browser -> Json : importar arquivo sintético
+Browser -> Storage : filtrar ID desconhecido / negativo
+Browser -> Json : exportar JSON versão 1
+Json --> Browser : validar app, versão e coleção
+note bottom
+Revisão 1.1.0 integrada no PR #3.
+Vercel removida a pedido do proprietário;
+nenhum deploy externo neste workflow.
+PW testa Chromium, ainda faltam outros navegadores/PWA offline.
+end note
+@enduml

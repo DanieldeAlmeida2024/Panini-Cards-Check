@@ -46,3 +46,20 @@ A coleção fica apenas neste navegador/dispositivo; não há sincronização ne
 
 
 **Evidência:** [CI #43110961065](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43110961065) validou TypeScript estrito, função de importação e Vite; o primeiro run #43110702702 havia revelado duas falhas de tipagem e motivou a correção de `.shell` nulo e de `Navigator.standalone` opcional. Isso não executa navegador/PWA reais.
+
+
+## Browser E2E (1.2.0 proposta, sem produção)
+
+O novo workflow `.github/workflows/browser-smoke.yml` inicia o Vite em `127.0.0.1:4173` e utiliza Playwright `1.56.1` com Chromium headless. Cada teste usa novo contexto/navegador e `serviceWorkers: 'block'` para que o teste não confunda cache PWA com integridade do fluxo de UI.
+
+Coberturas: cards carregados; click, armazenamento e reload; repetidas no DOM/storage; importação de fixture sintética com ID desconhecido/quantidade inválida; exportação JSON (`app`, `version=1`, data e coleção). Esses testes não representam dados de um usuário real. A estrutura JSON exportada continua v1.
+
+**Pendente mesmo com CI verde:** Chrome mobile/Firefox/WebKit, service worker offline, acessibilidade por teclado/leitor de tela, direitos de imagens e testes de stress/quota de storage. O projeto Vercel foi removido pelo proprietário; o repositório não requer deploy automático.
+
+
+## Evidência executada — Chromium e TypeScript
+
+- [Workflow navegador #43114237035](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114237035): **4/4 testes Chromium aprovados**, com browser headless, Vite local, arquivo JSON sintético e storage em contextos isolados.
+- [Workflow TypeScript/Vite #43114236930](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114236930): **success** para `tsc --noEmit`, unitários Node e build.
+- Commit verificado: `5375cf0f8c65f690f8381abda38cdb5033a20f56`; alterações documentais posteriores devem executar o CI novamente.
+- Sem Vercel ou publicação; **não foram executados** Safari/Firefox, PWA offline ou acessibilidade por leitor de tela.

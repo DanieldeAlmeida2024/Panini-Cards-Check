@@ -79,3 +79,10 @@ npm run build
 ```
 
 O CI Node 22/Vite precisa aprovar os comandos no GitHub. Esta revisão não substitui os testes manuais de navegação, PWA ou limpeza de armazenamento. [Contrato](docs/projeto/ESPECIFICACAO.md) · [Testes](docs/testes/PLANO_DE_TESTES.md) · [Versões](docs/controle/VERSIONAMENTO.md).
+
+
+## Testes de navegador e hospedagem (novembro/2026)
+
+A configuração anterior da Vercel foi retirada desta branch porque o projeto correspondente foi removido da plataforma. **Não há serviço de hospedagem ou implantação automática configurado por este PR**; o app continua executável localmente com `npm ci && npm run dev`.
+
+O novo workflow GitHub Actions executa cenários Chromium headless para seleção de cards, persistência e importação/exportação JSON com dados sintéticos. Essa cobertura **não substitui** testes PWA offline, diferentes browsers ou inspeção de licenças. [Evidências e limites](docs/testes/PLANO_DE_TESTES.md).

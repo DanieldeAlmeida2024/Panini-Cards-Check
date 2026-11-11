@@ -51,3 +51,24 @@ Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem
 
 
 **Resultado verificado:** [run #43110961065](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43110961065), Node 22, job de verificação **success**. O teste de `normalizeCollection` foi executado; typecheck e build passaram. Ainda faltam os critérios de interface e PWA em navegador real. O check separado **Vercel Preview Comments** não comprova publicação.
+
+
+## Regressão E2E introduzida em 1.2.0
+
+| IDs do plano | Exercício real no Chromium | Estado inicial |
+|---|---|---|
+| PAN-01 | App carrega base e renderiza `.sticker-card` | Pendente CI browser |
+| PAN-02/04 | Clique no card altera `localStorage` e reload conserva `aria-pressed` | Pendente CI browser |
+| PAN-03 | Botão `+` incrementa quantidade, `.repeat-count` mostra 1 com total 2 | Pendente CI browser |
+| PAN-05/06 | File chooser importa JSON v1, filtra item ausente e quantidade negativa | Pendente CI browser |
+| PAN-12 | Download via Blob mantém nome, formato v1, timestamp e quantidade | Pendente CI browser |
+
+**Testes:** `tests/browser-smoke.test.mjs`. Playwright instalado de forma efêmera com versão fixa no runner; não altera o `package-lock` da aplicação. UI de exportação e armazenamento é testada no browser, mas **não** instalação PWA offline. O workflow é executado apenas com localhost, sem Vercel.
+
+
+## Evidência executada — Chromium e TypeScript
+
+- [Workflow navegador #43114237035](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114237035): **4/4 testes Chromium aprovados**, com browser headless, Vite local, arquivo JSON sintético e storage em contextos isolados.
+- [Workflow TypeScript/Vite #43114236930](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114236930): **success** para `tsc --noEmit`, unitários Node e build.
+- Commit verificado: `5375cf0f8c65f690f8381abda38cdb5033a20f56`; alterações documentais posteriores devem executar o CI novamente.
+- Sem Vercel ou publicação; **não foram executados** Safari/Firefox, PWA offline ou acessibilidade por leitor de tela.

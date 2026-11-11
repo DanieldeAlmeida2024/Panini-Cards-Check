@@ -32,3 +32,21 @@ Aumentar MAJOR para quebra de contrato/estado, MINOR para funcionalidade/caso no
 - Primeira execução [CI #43110702702](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43110702702) **failure** por `shell` possivelmente `null` e propriedade Safari `navigator.standalone` não declarada; ambas corrigidas no código e explicadas nos documentos.
 - Execução de revisão [CI #43110961065](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43110961065) **success**: `tsc --noEmit`, testes de coleção em Node 22 e build Vite no commit `3b362ff8a89fe1342323a1cd64d4c16b1f6445c1`.
 - **Pendente:** Playwright em browser, teste real de PWA offline/import-export, armazenamento privado, políticas de imagens. Nenhum deploy Vercel foi solicitado neste PR.
+
+
+## Registro de integração e testes browser — 11/11/2026
+
+| Versão documental | Commit / PR | Gate / implantação |
+|---|---|---|
+| **1.1.0 integrada** | [PR #3](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/pull/3), squash `9a1b73f68c30dc3047327407a97de93932254e4e` | [CI #43111881405](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43111881405): TypeScript, testes unitários e Vite aprovados; sem deploy |
+| **1.2.0 proposta** | `test/browser-persistence-no-vercel-20261111` | Introduz testes Chromium reais para PAN-01/02/03/04/05/06/12; CI browser pendente no primeiro commit |
+
+O proprietário retirou o projeto correspondente da Vercel. O status legado `Vercel: Deployment was blocked` não representa a qualidade do código da aplicação. O arquivo `vercel.json` é removido **apenas nesta branch**; não há vínculo/configuração de outro provedor no workflow e nenhum deploy é executado.
+
+
+## Evidência executada — Chromium e TypeScript
+
+- [Workflow navegador #43114237035](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114237035): **4/4 testes Chromium aprovados**, com browser headless, Vite local, arquivo JSON sintético e storage em contextos isolados.
+- [Workflow TypeScript/Vite #43114236930](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114236930): **success** para `tsc --noEmit`, unitários Node e build.
+- Commit verificado: `5375cf0f8c65f690f8381abda38cdb5033a20f56`; alterações documentais posteriores devem executar o CI novamente.
+- Sem Vercel ou publicação; **não foram executados** Safari/Firefox, PWA offline ou acessibilidade por leitor de tela.
