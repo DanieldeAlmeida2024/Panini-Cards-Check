@@ -10,3 +10,5 @@ Diagramas editáveis alinhados ao código: [01_dominio](01_dominio.puml) · [02_
 - [E2E Chromium: seleção, repetidas, storage e importação/exportação](05_browser_regressao.puml) — revisão 1.2.0 proposta.
 
 - [Teclado do card versus botões de repetidas](06_foco_figurinha.puml) — v1.3.0 proposta, modelo de event bubbling e restauração de foco.
+
+- [Service worker, bundle Vite e navegação offline](07_pwa_offline.puml) — 1.4.0 proposta.

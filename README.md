@@ -89,3 +89,6 @@ O novo workflow GitHub Actions executa cenários Chromium headless para seleçã
 
 ## Correção de teclado dos cards
 A revisão 1.3.0 proposta diferencia Enter/Espaço no cartão dos botões nativos de repetidas, evitando alterações duplas por `keydown` propagado e mantendo o foco após atualizar o DOM. Os testes Chromium verificam comportamento real; veja [plano PAN-15](docs/testes/PLANO_DE_TESTES.md).
+
+### Primeiro acesso offline após instalação (v1.4.0 proposta)
+O service worker pré-carrega o JS/CSS do build Vite e os arquivos essenciais. O CI testa recarga de um álbum existente com **rede desligada** no Chromium, além de verificações de origem do cache. Não há deploy nem promessa de cache para imagens externas. [Plano](docs/testes/PLANO_DE_TESTES.md).

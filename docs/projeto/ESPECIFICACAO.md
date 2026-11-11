@@ -70,3 +70,13 @@ Coberturas: cards carregados; click, armazenamento e reload; repetidas no DOM/st
 O cartão `.sticker-card` responde a Enter/Espaço quando o **próprio cartão** possui foco. Quando um botão `.repeat-btn.plus/.minus` interno possui foco, o evento `keydown` sobe no DOM mas **não pode** disparar o toggle do cartão; o `click` nativo do botão incrementa/decrementa a quantidade normalmente. Após o re-render, a aplicação devolve o foco ao controle acionado pelo teclado (`event.detail === 0`), sem deslocar foco de cliques de mouse. O foco no cartão também é restaurado após toggle por teclado.
 
 E2E `tests/browser-smoke.test.mjs` verifica Enter/Espaço no cartão e no botão `+`, quantidade exata, `aria-pressed` e persistência de foco. Isto não substitui auditoria de acessibilidade assistiva, leitores de tela ou WebKit/Firefox. Sem publicação na Vercel.
+
+
+## Estratégia PWA para primeiro uso offline (1.4.0 proposta)
+
+- Durante `install`, o worker busca HTML da raiz, identifica assets `/assets/*.js` e `/assets/*.css` gerados pelo Vite e pré-carrega ambos juntamente com o catálogo JSON, manifest e ícones. Se o bundle JS não existir ou `cache.addAll` falhar, a instalação rejeita, preservando o worker anterior.
+- Cache `panini-album-check-2026-v2`: remove na ativação **somente** versões prefixadas do próprio álbum; não apaga caches de outras aplicações do mesmo domínio.
+- Navegação, dados e manifesto JSON usam rede primeiro, com fallback local em falha; bundles e imagens locais cacheados podem ser reutilizados. **Recursos externos** (como flags CDN) não são interceptados e podem não aparecer offline. O álbum e seu progresso em `localStorage` continuam utilizáveis.
+- O teste executa **build Vite**, não servidor de desenvolvimento: instala service worker, confirma JS/CSS no CacheStorage, desliga a rede no Chromium, recarrega a aplicação e verifica cartão e coleção preservada.
+
+**Limites:** não há sincronização entre dispositivos, evicção do navegador nem garantia de todas as imagens offline. Instalar em navegador de dispositivo real, política de atualização de SW, quotas e WebKit/Safari continuam pendentes.

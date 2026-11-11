@@ -88,3 +88,28 @@ Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem
 - [TypeScript e Vite #43116494356](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43116494356): **success**.
 - Commit de código testado: `ff9304a02d3b85b8f639df4ac12b717c876e00a1`. Documentação adicionada depois do run; novo HEAD deverá manter os mesmos gates verdes antes do merge.
 - Sem deploy; CI não substitui testes de segurança/rede/ambiente real fora do escopo.
+
+
+## PAN-PWA01/02 — testes E2E reais de primeiro uso offline
+
+| ID | Prova automatizada | Resultado inicial |
+|---|---|---|
+| PAN-PWA01 | Vite build → Chromium controlado por SW → JS/CSS e JSON em CacheStorage → desligar rede → reload renderiza álbum e figura selecionada | Aguardando CI |
+| PAN-PWA02 | Cache de aplicação contém somente URLs de **mesma origem** | Aguardando CI |
+
+O novo workflow `.github/workflows/offline-pwa.yml` executa em `localhost:4174` e não publica aplicação na Vercel nem em outro provedor. Os seis testes de navegador e os testes unitários existentes permanecem em workflows separados. Escopo não inclui instalação real no Android/iOS ou flags CDN offline.
+
+
+### Primeiro CI PWA (evidência de falha e reparo)
+
+- [CI #43118864151](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43118864151): **PAN-PWA01 aprovado** — instalou service worker, comprovou cache do JS/CSS e recarregou o álbum offline preservando a figurinha.
+- **PAN-PWA02 falhou apenas no teste**: a constante `const URL = ...` do Node sombreava o construtor global `URL`, resultando em `TypeError: URL is not a constructor`, sem evidenciar falha de cache.
+- Revisão do teste: renomeada a constante para `BASE_URL`, preservando `new URL(...)` para validar a origem. **O novo HEAD precisa passar novamente no CI** para confirmar ambos os cenários.
+
+
+### Evidência de execução da revisão 1.4.0
+- [CI de PWA #43119338415](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43119338415): **PAN-PWA01/02 PASS (2/2)**. O Chromium carregou build Vite, confirmou JS/CSS no cache e abriu o álbum offline com figura preservada. O teste de isolamento de origem também passou após renomear `URL` para `BASE_URL`.
+- [Testes Chromium #43119338356](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43119338356) e [typecheck/Vite #43119338546](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43119338546) também **success**.
+- Ainda faltam Safari/iOS, armazenamento sob quota e imagens externas offline; nenhum deploy.
+
+O SHA do commit documental posterior deve voltar a passar no CI antes do merge.
