@@ -45,3 +45,6 @@ Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem
 | PAN-14 | `__proto__`, `constructor`, IDs falsos/fora do catálogo não contaminam estado | Escape HTML em DOM continua exigindo Playwright |
 
 **Gates:** `npm ci` → `npm run typecheck` → `npm run test:unit` → `npm run build` usando Node 22 em `.github/workflows/verify.yml`. O último SHA da branch precisa apresentar checks success no GitHub. Os casos browser PAN-01..03/07..13/15 continuam sem E2E e devem ser mantidos como planejados.
+
+
+**Correção de compilação detectada pelo gate:** a primeira execução CI #43110702702 falhou no `tsc --noEmit` por elemento shell opcional e tipo incompleto de Navigator. O patch introduz verificação explícita de `shell` e `Navigator & {standalone?:boolean}`; aguarda rerun no HEAD. Isso demonstra por que somente `vite build` não bastava.

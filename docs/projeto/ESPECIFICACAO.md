@@ -40,3 +40,6 @@ A coleção fica apenas neste navegador/dispositivo; não há sincronização ne
 - **Não coberto ainda:** testes browser/Playwright de eventos, quota/limpeza de storage, sincronização entre dispositivos, PWA offline em produção e direitos de imagens de terceiros.
 
 [UML da validação](../uml/04_importacao_estado.puml), [plano de testes](../testes/PLANO_DE_TESTES.md) e [controle documental](../controle/VERSIONAMENTO.md).
+
+
+**Compatibilidade entre DOM e TypeScript:** a renderização testa a existência do elemento `.shell` antes de ler `dataset`. O campo iOS Safari `navigator.standalone` não faz parte do `Navigator` universal, portanto é lido como propriedade opcional de interface estendida (com fallback pelo `matchMedia`). O tipo correto não altera o funcionamento do botão PWA em navegadores sem a extensão.

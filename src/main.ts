@@ -474,7 +474,7 @@ const render = (data: AlbumData, collection: CollectionState, cardImages: CardIm
   });
   const selectedCountry = countriesById.get(selectedCountryId) ?? data.countries[0];
 
-  if (!grid || !empty || !progress || !selectedCountry || !missingList || !missingCount || !repeatsList || !repeatsCount || !countryCards) return;
+  if (!shell || !grid || !empty || !progress || !selectedCountry || !missingList || !missingCount || !repeatsList || !repeatsCount || !countryCards) return;
 
   const countryStickers = data.stickers
     .filter((sticker) => sticker.countryId === selectedCountry.id)
@@ -774,7 +774,7 @@ const init = async () => {
   shell.dataset.countryId = String(data.countries[0]?.id ?? 1);
   shell.dataset.countryPickerExpanded = "false";
   let deferredInstallPrompt: InstallPromptEvent | null = null;
-  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
   installButton.hidden = isStandalone;
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
