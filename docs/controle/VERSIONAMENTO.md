@@ -50,3 +50,13 @@ O proprietário retirou o projeto correspondente da Vercel. O status legado `Ver
 - [Workflow TypeScript/Vite #43114236930](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114236930): **success** para `tsc --noEmit`, unitários Node e build.
 - Commit verificado: `5375cf0f8c65f690f8381abda38cdb5033a20f56`; alterações documentais posteriores devem executar o CI novamente.
 - Sem Vercel ou publicação; **não foram executados** Safari/Firefox, PWA offline ou acessibilidade por leitor de tela.
+
+
+## Versão 1.3.0 proposta — regressão de acessibilidade por teclado (11/11/2026)
+
+| Marco | Código / revisão | Evidência |
+|---|---|---|
+| **1.2.0 integrada** | [PR #4](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/pull/4), squash `fee61d282e2fdfc69e217e41534c5a70385a9aca` | Chromium 4/4, TS e Vite aprovados; hospedagem Vercel removida |
+| **1.3.0 proposta** | `fix/keyboard-sticker-repeat-20261111` | Corrigir propagação `keydown` entre cartão e controles internos, preservar foco; novos E2E PAN-15 pendentes de CI |
+
+**Não alterar** o schema JSON v1 nem o armazenamento da coleção. A correção se limita à interação de teclado. Nenhuma implantação web.

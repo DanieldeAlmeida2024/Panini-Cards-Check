@@ -72,3 +72,11 @@ Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem
 - [Workflow TypeScript/Vite #43114236930](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114236930): **success** para `tsc --noEmit`, unitários Node e build.
 - Commit verificado: `5375cf0f8c65f690f8381abda38cdb5033a20f56`; alterações documentais posteriores devem executar o CI novamente.
 - Sem Vercel ou publicação; **não foram executados** Safari/Firefox, PWA offline ou acessibilidade por leitor de tela.
+
+
+## PAN-15 — regressões reais de acessibilidade por teclado (1.3.0 proposta)
+
+- **Novo teste 1:** foco no cartão, Enter → marca quantidade 1 e mantém foco; foco em `+`, Enter → quantidade 2 sem desmarcar o cartão e mantém foco no botão; Espaço no mesmo botão → quantidade 3.
+- **Novo teste 2:** Espaço no cartão marca quantidade 1 e mantém foco.
+- **Critério de rejeição:** não confundir `keydown` propagado de botão interno com acionamento da `.sticker-card`; o navegador já gera `click` de botões nativos.
+- **Evidência:** registrar run Chromium do HEAD do PR. Teste de leitor de tela, tab order completo e navegação por modais ainda pendentes.

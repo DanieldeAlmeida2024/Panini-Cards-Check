@@ -86,3 +86,6 @@ O CI Node 22/Vite precisa aprovar os comandos no GitHub. Esta revisão não subs
 A configuração anterior da Vercel foi retirada desta branch porque o projeto correspondente foi removido da plataforma. **Não há serviço de hospedagem ou implantação automática configurado por este PR**; o app continua executável localmente com `npm ci && npm run dev`.
 
 O novo workflow GitHub Actions executa cenários Chromium headless para seleção de cards, persistência e importação/exportação JSON com dados sintéticos. Essa cobertura **não substitui** testes PWA offline, diferentes browsers ou inspeção de licenças. [Evidências e limites](docs/testes/PLANO_DE_TESTES.md).
+
+## Correção de teclado dos cards
+A revisão 1.3.0 proposta diferencia Enter/Espaço no cartão dos botões nativos de repetidas, evitando alterações duplas por `keydown` propagado e mantendo o foco após atualizar o DOM. Os testes Chromium verificam comportamento real; veja [plano PAN-15](docs/testes/PLANO_DE_TESTES.md).

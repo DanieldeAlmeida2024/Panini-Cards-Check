@@ -63,3 +63,10 @@ Coberturas: cards carregados; click, armazenamento e reload; repetidas no DOM/st
 - [Workflow TypeScript/Vite #43114236930](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114236930): **success** para `tsc --noEmit`, unitários Node e build.
 - Commit verificado: `5375cf0f8c65f690f8381abda38cdb5033a20f56`; alterações documentais posteriores devem executar o CI novamente.
 - Sem Vercel ou publicação; **não foram executados** Safari/Firefox, PWA offline ou acessibilidade por leitor de tela.
+
+
+## Contrato de teclado — 1.3.0 proposta
+
+O cartão `.sticker-card` responde a Enter/Espaço quando o **próprio cartão** possui foco. Quando um botão `.repeat-btn.plus/.minus` interno possui foco, o evento `keydown` sobe no DOM mas **não pode** disparar o toggle do cartão; o `click` nativo do botão incrementa/decrementa a quantidade normalmente. Após o re-render, a aplicação devolve o foco ao controle acionado pelo teclado (`event.detail === 0`), sem deslocar foco de cliques de mouse. O foco no cartão também é restaurado após toggle por teclado.
+
+E2E `tests/browser-smoke.test.mjs` verifica Enter/Espaço no cartão e no botão `+`, quantidade exata, `aria-pressed` e persistência de foco. Isto não substitui auditoria de acessibilidade assistiva, leitores de tela ou WebKit/Firefox. Sem publicação na Vercel.
