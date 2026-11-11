@@ -65,3 +65,17 @@ npm run preview
 - [Diagramas UML editáveis](docs/uml/README.md)
 - [Plano de testes](docs/testes/PLANO_DE_TESTES.md)
 - [Controle de versões](docs/controle/VERSIONAMENTO.md)
+
+
+## Integridade do álbum e CI (v1.1.0 proposta)
+
+A validação do `localStorage` e dos arquivos importados agora usa as mesmas regras de coleção, com descarte de IDs inexistentes no álbum e de quantidades inválidas. A estrutura JSON exportada permanece na versão 1.
+
+```bash
+npm ci
+npm run typecheck
+npm run test:unit
+npm run build
+```
+
+O CI Node 22/Vite precisa aprovar os comandos no GitHub. Esta revisão não substitui os testes manuais de navegação, PWA ou limpeza de armazenamento. [Contrato](docs/projeto/ESPECIFICACAO.md) · [Testes](docs/testes/PLANO_DE_TESTES.md) · [Versões](docs/controle/VERSIONAMENTO.md).

@@ -1,6 +1,6 @@
 # Plano de testes — álbum de figurinhas Copa 2026
 
-> **PAN — documentação v1.0.0** · 11/11/2026 · revisão do código `99e3b3c60af763b54020fc2e994adf97eb2030dd`.
+> **PAN — documentação v1.1.0 proposta** · 11/11/2026 · revisão do código `99e3b3c60af763b54020fc2e994adf97eb2030dd`.
 
 
 ## Ferramentas e evidência existente
@@ -31,3 +31,17 @@ npm run build
 npm run preview
 ```
 Executar testes interativos em Chrome e Firefox no ambiente local antes do deploy, capturando screenshots, estado inicial e dados de teste. Não carregar figurinhas reais no navegador de testes do usuário. Nenhum dos cenários PAN-01–PAN-15 deve ser marcado PASS apenas por análise estática.
+
+
+## Testes automatizados acrescentados — v1.1.0 proposta
+
+Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem DOM. O contrato é coberto por:
+
+| Caso original | Verificação implementada | Limite de interpretação |
+|---|---|---|
+| PAN-04 | Carregamento de JSON persistido filtra IDs obsoletos | Teste de função; persistência real no navegador pendente |
+| PAN-05 | Formatos legado e exportado seguem aceitos | Sem teste de upload por elemento HTML |
+| PAN-06 | Negativos, zeros, texto, booleano, `Infinity` e decimais inválidos não entram | Quantidade >0 truncada dentro de limites seguros |
+| PAN-14 | `__proto__`, `constructor`, IDs falsos/fora do catálogo não contaminam estado | Escape HTML em DOM continua exigindo Playwright |
+
+**Gates:** `npm ci` → `npm run typecheck` → `npm run test:unit` → `npm run build` usando Node 22 em `.github/workflows/verify.yml`. O último SHA da branch precisa apresentar checks success no GitHub. Os casos browser PAN-01..03/07..13/15 continuam sem E2E e devem ser mantidos como planejados.
