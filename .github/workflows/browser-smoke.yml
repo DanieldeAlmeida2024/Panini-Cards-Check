@@ -1,0 +1,39 @@
+name: Panini - Chromium browser regression
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    name: Navegador Chromium - coleção/importação/exportação
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Instalar dependências com lock da aplicação
+        run: npm ci
+      - name: Instalar somente dependência efêmera de E2E
+        run: npm install --no-save --package-lock=false --ignore-scripts "playwright@1.56.1"
+      - name: Instalar Chromium de teste
+        run: npx playwright install --with-deps chromium
+      - name: Iniciar aplicação local sem deploy externo
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 4173 --strictPort > /tmp/panini-vite.log 2>&1 &
+          echo $! > /tmp/panini-vite.pid
+          for i in $(seq 1 45); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/panini-vite.log
+          exit 1
+      - name: Exercitar UI real, storage, importação e exportação
+        run: node --test tests/browser-smoke.test.mjs
