@@ -1,4 +1,5 @@
 import "./styles.css";
+import { normalizeCollection, type CollectionState } from "./collection-state.ts";
 
 type Country = {
   id: number;
@@ -52,7 +53,6 @@ type AlbumData = {
   stickers: Sticker[];
 };
 
-type CollectionState = Record<string, number>;
 type CardImageManifest = Record<string, string>;
 type ExportPayload = {
   app: "panini-world-cup-2026-album";
@@ -232,11 +232,12 @@ const stickerSvg = (sticker: Sticker, country: Country, title: string) => {
   `;
 };
 
-const readCollection = (): CollectionState => {
+const readCollection = (allowedIds: ReadonlySet<string>): CollectionState => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
+    return raw ? normalizeCollection(JSON.parse(raw), allowedIds) : {};
   } catch {
+    // Estado do navegador indisponível/corrompido: não usar valores não validados.
     return {};
   }
 };
@@ -250,24 +251,6 @@ const registerServiceWorker = () => {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js").catch(() => undefined);
   });
-};
-
-const normalizeCollection = (value: unknown): CollectionState => {
-  if (!value || typeof value !== "object") return {};
-  const source =
-    "collection" in value && typeof (value as { collection?: unknown }).collection === "object"
-      ? (value as { collection: unknown }).collection
-      : value;
-  const output: CollectionState = {};
-
-  for (const [key, rawQuantity] of Object.entries(source as Record<string, unknown>)) {
-    const quantity = Number(rawQuantity);
-    if (Number.isFinite(quantity) && quantity > 0) {
-      output[String(key)] = Math.floor(quantity);
-    }
-  }
-
-  return output;
 };
 
 const loadAlbum = async (): Promise<AlbumData> => {
@@ -746,7 +729,8 @@ const init = async () => {
 
   const data = await loadAlbum();
   const cardImages = await loadCardImages();
-  const collection = readCollection();
+  const allowedStickerIds = new Set(data.stickers.map((sticker) => String(sticker.id)));
+  const collection = readCollection(allowedStickerIds);
   const searchInput = document.querySelector<HTMLInputElement>("#searchInput");
   const grid = document.querySelector<HTMLDivElement>("#stickerGrid");
   const shell = document.querySelector<HTMLElement>(".shell");
@@ -825,7 +809,7 @@ const init = async () => {
     if (!file) return;
 
     try {
-      const imported = normalizeCollection(JSON.parse(await file.text()));
+      const imported = normalizeCollection(JSON.parse(await file.text()), allowedStickerIds);
 
       if (importMode === "replace") {
         for (const key of Object.keys(collection)) delete collection[key];
