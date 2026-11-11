@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { chromium } from 'playwright';
 
-const URL = process.env.PANINI_BASE_URL || 'http://127.0.0.1:4174';
+const BASE_URL = process.env.PANINI_BASE_URL || 'http://127.0.0.1:4174';
 const KEY = 'panini-world-cup-2026-collection-v1';
 
 test('PAN-PWA01: primeiro uso online instala JS/CSS; offline abre álbum e conserva progresso', async (t) => {
@@ -11,7 +11,7 @@ test('PAN-PWA01: primeiro uso online instala JS/CSS; offline abre álbum e conse
   const context = await browser.newContext({ serviceWorkers: 'allow' });
   t.after(() => context.close());
   const page = await context.newPage();
-  await page.goto(URL, { waitUntil: 'load' });
+  await page.goto(BASE_URL, { waitUntil: 'load' });
 
   const first = page.locator('.sticker-card[data-sticker-id]').first();
   await first.waitFor({ timeout: 20000 });
@@ -60,12 +60,12 @@ test('PAN-PWA02: cache do app não sequestra respostas cross-origin', async (t) 
   const context = await browser.newContext({ serviceWorkers: 'allow' });
   t.after(() => context.close());
   const page = await context.newPage();
-  await page.goto(URL, { waitUntil: 'load' });
+  await page.goto(BASE_URL, { waitUntil: 'load' });
   await page.evaluate(() => navigator.serviceWorker.ready);
   const keys = await page.evaluate(async () => {
     const cache = await caches.open('panini-album-check-2026-v2');
     const keys = await cache.keys();
     return keys.map((x) => new URL(x.url).origin);
   });
-  assert.ok(keys.every((origin) => origin === new URL(URL).origin));
+  assert.ok(keys.every((origin) => origin === new URL(BASE_URL).origin));
 });

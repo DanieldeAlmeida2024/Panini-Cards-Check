@@ -75,3 +75,10 @@ O proprietário retirou o projeto correspondente da Vercel. O status legado `Ver
 A versão documental 1.3.0 foi integrada pelo [PR #5](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/pull/5), squash `474304738e04eb1ba3941da71b1533e18ccc1246`, com 6/6 testes Chromium e gates TypeScript/Vite aprovados.
 
 O service worker anterior cacheava a página e JSON, mas **não pré-cacheava o bundle JS/CSS com hash do Vite**, impedindo garantir o primeiro acesso offline após uma instalação bem-sucedida. A branch `fix/pwa-offline-bundle-cache-20261111` introduz descoberta do JS/CSS pelo HTML gerado, cache transacional durante instalação, versão de cache v2, limpeza apenas dos caches próprios e fallback de navegação. CI usa build real de produção e Playwright em modo offline. **Evidência pendente até executar o workflow.** Não foi realizado deploy.
+
+
+### Primeiro CI PWA (evidência de falha e reparo)
+
+- [CI #43118864151](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43118864151): **PAN-PWA01 aprovado** — instalou service worker, comprovou cache do JS/CSS e recarregou o álbum offline preservando a figurinha.
+- **PAN-PWA02 falhou apenas no teste**: a constante `const URL = ...` do Node sombreava o construtor global `URL`, resultando em `TypeError: URL is not a constructor`, sem evidenciar falha de cache.
+- Revisão do teste: renomeada a constante para `BASE_URL`, preservando `new URL(...)` para validar a origem. **O novo HEAD precisa passar novamente no CI** para confirmar ambos os cenários.

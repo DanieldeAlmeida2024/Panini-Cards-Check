@@ -98,3 +98,10 @@ Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem
 | PAN-PWA02 | Cache de aplicação contém somente URLs de **mesma origem** | Aguardando CI |
 
 O novo workflow `.github/workflows/offline-pwa.yml` executa em `localhost:4174` e não publica aplicação na Vercel nem em outro provedor. Os seis testes de navegador e os testes unitários existentes permanecem em workflows separados. Escopo não inclui instalação real no Android/iOS ou flags CDN offline.
+
+
+### Primeiro CI PWA (evidência de falha e reparo)
+
+- [CI #43118864151](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43118864151): **PAN-PWA01 aprovado** — instalou service worker, comprovou cache do JS/CSS e recarregou o álbum offline preservando a figurinha.
+- **PAN-PWA02 falhou apenas no teste**: a constante `const URL = ...` do Node sombreava o construtor global `URL`, resultando em `TypeError: URL is not a constructor`, sem evidenciar falha de cache.
+- Revisão do teste: renomeada a constante para `BASE_URL`, preservando `new URL(...)` para validar a origem. **O novo HEAD precisa passar novamente no CI** para confirmar ambos os cenários.
