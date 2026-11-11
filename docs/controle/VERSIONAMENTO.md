@@ -42,3 +42,11 @@ Aumentar MAJOR para quebra de contrato/estado, MINOR para funcionalidade/caso no
 | **1.2.0 proposta** | `test/browser-persistence-no-vercel-20261111` | Introduz testes Chromium reais para PAN-01/02/03/04/05/06/12; CI browser pendente no primeiro commit |
 
 O proprietário retirou o projeto correspondente da Vercel. O status legado `Vercel: Deployment was blocked` não representa a qualidade do código da aplicação. O arquivo `vercel.json` é removido **apenas nesta branch**; não há vínculo/configuração de outro provedor no workflow e nenhum deploy é executado.
+
+
+## Evidência executada — Chromium e TypeScript
+
+- [Workflow navegador #43114237035](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114237035): **4/4 testes Chromium aprovados**, com browser headless, Vite local, arquivo JSON sintético e storage em contextos isolados.
+- [Workflow TypeScript/Vite #43114236930](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114236930): **success** para `tsc --noEmit`, unitários Node e build.
+- Commit verificado: `5375cf0f8c65f690f8381abda38cdb5033a20f56`; alterações documentais posteriores devem executar o CI novamente.
+- Sem Vercel ou publicação; **não foram executados** Safari/Firefox, PWA offline ou acessibilidade por leitor de tela.

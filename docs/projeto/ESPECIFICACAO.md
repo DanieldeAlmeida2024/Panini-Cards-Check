@@ -55,3 +55,11 @@ O novo workflow `.github/workflows/browser-smoke.yml` inicia o Vite em `127.0.0.
 Coberturas: cards carregados; click, armazenamento e reload; repetidas no DOM/storage; importação de fixture sintética com ID desconhecido/quantidade inválida; exportação JSON (`app`, `version=1`, data e coleção). Esses testes não representam dados de um usuário real. A estrutura JSON exportada continua v1.
 
 **Pendente mesmo com CI verde:** Chrome mobile/Firefox/WebKit, service worker offline, acessibilidade por teclado/leitor de tela, direitos de imagens e testes de stress/quota de storage. O projeto Vercel foi removido pelo proprietário; o repositório não requer deploy automático.
+
+
+## Evidência executada — Chromium e TypeScript
+
+- [Workflow navegador #43114237035](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114237035): **4/4 testes Chromium aprovados**, com browser headless, Vite local, arquivo JSON sintético e storage em contextos isolados.
+- [Workflow TypeScript/Vite #43114236930](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114236930): **success** para `tsc --noEmit`, unitários Node e build.
+- Commit verificado: `5375cf0f8c65f690f8381abda38cdb5033a20f56`; alterações documentais posteriores devem executar o CI novamente.
+- Sem Vercel ou publicação; **não foram executados** Safari/Firefox, PWA offline ou acessibilidade por leitor de tela.

@@ -64,3 +64,11 @@ Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem
 | PAN-12 | Download via Blob mantém nome, formato v1, timestamp e quantidade | Pendente CI browser |
 
 **Testes:** `tests/browser-smoke.test.mjs`. Playwright instalado de forma efêmera com versão fixa no runner; não altera o `package-lock` da aplicação. UI de exportação e armazenamento é testada no browser, mas **não** instalação PWA offline. O workflow é executado apenas com localhost, sem Vercel.
+
+
+## Evidência executada — Chromium e TypeScript
+
+- [Workflow navegador #43114237035](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114237035): **4/4 testes Chromium aprovados**, com browser headless, Vite local, arquivo JSON sintético e storage em contextos isolados.
+- [Workflow TypeScript/Vite #43114236930](https://github.com/DanieldeAlmeida2024/Panini-Cards-Check/actions/runs/43114236930): **success** para `tsc --noEmit`, unitários Node e build.
+- Commit verificado: `5375cf0f8c65f690f8381abda38cdb5033a20f56`; alterações documentais posteriores devem executar o CI novamente.
+- Sem Vercel ou publicação; **não foram executados** Safari/Firefox, PWA offline ou acessibilidade por leitor de tela.
