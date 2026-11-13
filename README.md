@@ -8,6 +8,8 @@ Vite, TypeScript, Python, localStorage. Código e configurações principais: `p
 ## Começar
 npm ci && npm run dev
 
+O servidor Vite escuta apenas em `127.0.0.1` por padrão, evitando exposição involuntária na rede. Para testes intencionais em outro dispositivo de uma rede confiável, utilize `npm run dev:lan`; não utilize o servidor de desenvolvimento como serviço público.
+
 **Validação nativa:** `npm run build`. Não afirmar sucesso sem executar o procedimento com as dependências necessárias.
 
 ## Cuidados
@@ -92,3 +94,7 @@ A revisão 1.3.0 proposta diferencia Enter/Espaço no cartão dos botões nativo
 
 ### Primeiro acesso offline após instalação (v1.4.0 proposta)
 O service worker pré-carrega o JS/CSS do build Vite e os arquivos essenciais. O CI testa recarga de um álbum existente com **rede desligada** no Chromium, além de verificações de origem do cache. Não há deploy nem promessa de cache para imagens externas. [Plano](docs/testes/PLANO_DE_TESTES.md).
+
+## Portabilidade dos scripts (13/11/2026)
+
+O script `npm run fill:missing-info` usa `python` disponível no PATH, em vez de depender de `venv\\Scripts\\python.exe` do Windows. Ative o ambiente virtual e instale as dependências Python do projeto antes da execução. `npm run check` mantém typecheck, testes unitários e build; nenhum deploy público foi habilitado nesta alteração.
