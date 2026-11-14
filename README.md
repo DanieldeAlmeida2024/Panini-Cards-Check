@@ -1,100 +1,50 @@
-# Panini-Cards-Check
-
-Aplicativo web mobile-first para acompanhar figurinhas do álbum Copa 2026.
-
-## Tecnologias e organização
-Vite, TypeScript, Python, localStorage. Código e configurações principais: `package.json, public/data/, panini_album/`.
-
-## Começar
-npm ci && npm run dev
-
-O servidor Vite escuta apenas em `127.0.0.1` por padrão, evitando exposição involuntária na rede. Para testes intencionais em outro dispositivo de uma rede confiável, utilize `npm run dev:lan`; não utilize o servidor de desenvolvimento como serviço público.
-
-**Validação nativa:** `npm run build`. Não afirmar sucesso sem executar o procedimento com as dependências necessárias.
-
-## Cuidados
-Dados locais do navegador não são sincronizados. Validar fonte e integridade das imagens/dados.
-
-**Documentação técnica:** [Requisitos](docs/REQUISITOS.md) · [Arquitetura](docs/ARQUITETURA.md) · [UML](docs/UML.puml) · [Plano de testes](docs/PLANO_TESTES.md) · [Guia para IA](AGENTS.md).
-
----
-
-## Conteúdo anterior do repositório (preservado)
-
 # Panini Cards Check
 
-Aplicacao web mobile-first para gerenciar as figurinhas do album Panini da Copa do Mundo 2026.
+Aplicação web mobile-first para organizar a coleção de figurinhas do álbum da Copa do Mundo 2026. Permite selecionar cartas, controlar repetidas, consultar itens faltantes e manter o progresso no próprio navegador.
 
-## Funcionalidades
+## Recursos
 
-- Grade por selecao com 20 cartas: escudo no slot 1, foto da selecao no slot 13 e jogadores nos demais slots.
-- Filtro por selecao e busca por nome do jogador, numero do slot ou codigo da carta.
-- Estado salvo no navegador com `localStorage`, sem alterar a base oficial.
-- Controle de cartas selecionadas e repetidas diretamente no card.
-- Lista completa e compacta das cartas ainda nao selecionadas pelo usuario.
-- Configuracao pronta para deploy na Vercel.
+- Grade de figurinhas por seleção, com pesquisa por nome, número, código e filtros.
+- Marcação de figurinhas adquiridas e controle de quantidade repetida.
+- Relação de cartas faltantes, em visualização completa ou compacta.
+- Persistência local em `localStorage`, com importação/exportação e validação da coleção.
+- Service worker e recursos de uso offline testados em Chromium.
 
-## Dados
+## Tecnologias e dados
 
-A aplicacao usa como fonte somente leitura:
+Vite · TypeScript · JavaScript · Python (scripts de preparação de dados).
 
-- `public/data/panini_world_cup_2026.json`
+A base consumida pela aplicação é `public/data/panini_world_cup_2026.json`. Os scripts de dados e imagens estão em `scripts/`; a aplicação não altera o arquivo de catálogo quando o usuário marca cartas.
 
-Esse arquivo foi copiado a partir de `output/panini_world_cup_2026.json`.
-
-## Rodar localmente
-
-```bash
-npm install
-npm run dev
-```
-
-## Build
-
-```bash
-npm run build
-```
-
-## Preview de producao
-
-```bash
-npm run preview
-```
-
-## Documentação técnica versionada
-
-- [Especificação e análise de domínio](docs/projeto/ESPECIFICACAO.md)
-- [Diagramas UML editáveis](docs/uml/README.md)
-- [Plano de testes](docs/testes/PLANO_DE_TESTES.md)
-- [Controle de versões](docs/controle/VERSIONAMENTO.md)
-
-
-## Integridade do álbum e CI (v1.1.0 proposta)
-
-A validação do `localStorage` e dos arquivos importados agora usa as mesmas regras de coleção, com descarte de IDs inexistentes no álbum e de quantidades inválidas. A estrutura JSON exportada permanece na versão 1.
+## Execução local
 
 ```bash
 npm ci
-npm run typecheck
-npm run test:unit
-npm run build
+npm run dev
 ```
 
-O CI Node 22/Vite precisa aprovar os comandos no GitHub. Esta revisão não substitui os testes manuais de navegação, PWA ou limpeza de armazenamento. [Contrato](docs/projeto/ESPECIFICACAO.md) · [Testes](docs/testes/PLANO_DE_TESTES.md) · [Versões](docs/controle/VERSIONAMENTO.md).
+A aplicação usa `127.0.0.1` no servidor de desenvolvimento. Para testar outro dispositivo na rede local confiável, utilize `npm run dev:lan`.
 
+```bash
+npm run check
+npm run preview
+```
 
-## Testes de navegador e hospedagem (novembro/2026)
+O comando `check` reúne typecheck, testes de regras da coleção e build. O comando `fill:missing-info` utiliza o interpretador `python` disponível no ambiente; instale as dependências Python exigidas pelo script antes de executá-lo.
 
-A configuração anterior da Vercel foi retirada desta branch porque o projeto correspondente foi removido da plataforma. **Não há serviço de hospedagem ou implantação automática configurado por este PR**; o app continua executável localmente com `npm ci && npm run dev`.
+## Qualidade e integração contínua
 
-O novo workflow GitHub Actions executa cenários Chromium headless para seleção de cards, persistência e importação/exportação JSON com dados sintéticos. Essa cobertura **não substitui** testes PWA offline, diferentes browsers ou inspeção de licenças. [Evidências e limites](docs/testes/PLANO_DE_TESTES.md).
+Os workflows do GitHub Actions incluem:
+- `verify.yml`: validações TypeScript, regras da coleção e build.
+- `browser-smoke.yml`: cenários em Chromium para seleção, persistência e importação/exportação.
+- `offline-pwa.yml`: regressão de instalação/recarga offline de recursos essenciais.
 
-## Correção de teclado dos cards
-A revisão 1.3.0 proposta diferencia Enter/Espaço no cartão dos botões nativos de repetidas, evitando alterações duplas por `keydown` propagado e mantendo o foco após atualizar o DOM. Os testes Chromium verificam comportamento real; veja [plano PAN-15](docs/testes/PLANO_DE_TESTES.md).
+Os dados da coleção persistem no navegador e não são sincronizados entre dispositivos. O uso offline depende dos recursos previamente armazenados; imagens externas não têm garantia de disponibilidade sem conexão.
 
-### Primeiro acesso offline após instalação (v1.4.0 proposta)
-O service worker pré-carrega o JS/CSS do build Vite e os arquivos essenciais. O CI testa recarga de um álbum existente com **rede desligada** no Chromium, além de verificações de origem do cache. Não há deploy nem promessa de cache para imagens externas. [Plano](docs/testes/PLANO_DE_TESTES.md).
+## Publicação e conteúdo
 
-## Portabilidade dos scripts (13/11/2026)
+A aplicação pode ser executada localmente ou gerada como site estático; **não há deploy público automático configurado neste repositório**. A publicação deve respeitar os direitos de uso de imagens, nomes, marcas e dados do álbum.
 
-O script `npm run fill:missing-info` usa `python` disponível no PATH, em vez de depender de `venv\\Scripts\\python.exe` do Windows. Ative o ambiente virtual e instale as dependências Python do projeto antes da execução. `npm run check` mantém typecheck, testes unitários e build; nenhum deploy público foi habilitado nesta alteração.
+## Documentação
+
+[Requisitos](docs/REQUISITOS.md) · [Arquitetura](docs/ARQUITETURA.md) · [UML](docs/uml/README.md) · [Especificação de domínio](docs/projeto/ESPECIFICACAO.md) · [Testes](docs/testes/PLANO_DE_TESTES.md) · [Versionamento](docs/controle/VERSIONAMENTO.md).
