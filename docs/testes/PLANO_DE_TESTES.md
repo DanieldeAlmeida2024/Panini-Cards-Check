@@ -113,3 +113,19 @@ O novo workflow `.github/workflows/offline-pwa.yml` executa em `localhost:4174` 
 - Ainda faltam Safari/iOS, armazenamento sob quota e imagens externas offline; nenhum deploy.
 
 O SHA do commit documental posterior deve voltar a passar no CI antes do merge.
+
+## PAN-16 — Integridade da importação de backups
+
+| Caso | Verificação |
+| --- | --- |
+| Backup do álbum versão 1 | Importa IDs e quantidades reconhecidos |
+| Mapa legado | Mantém compatibilidade com `{id: quantidade}` |
+| Backup de outro aplicativo | Recusa antes de modificar `localStorage` |
+| Versão diferente de 1 | Recusa e preserva o estado atual |
+| Collection de tipo incorreto | Recusa |
+| JSON não reconhecido e sem IDs válidos | Recusa em vez de apagar o álbum |
+| Arquivo acima de 512 KiB | Recusa antes da leitura |
+| Backup identificado com coleção vazia | Permite zerar intencionalmente |
+| E2E Chromium | Simula importações inválidas e verifica progressos anteriores |
+
+**Execução:** `npm run test:unit`, `npm run build` e workflow `browser-smoke.yml` com Playwright.
