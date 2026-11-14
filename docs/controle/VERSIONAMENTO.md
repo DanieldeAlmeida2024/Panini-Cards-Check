@@ -90,3 +90,13 @@ O service worker anterior cacheava a página e JSON, mas **não pré-cacheava o 
 - Ainda faltam Safari/iOS, armazenamento sob quota e imagens externas offline; nenhum deploy.
 
 O SHA do commit documental posterior deve voltar a passar no CI antes do merge.
+
+## 1.5.0 — Proteção do contrato de importação (14/11/2026)
+
+- `src/collection-state.ts`: parser de backups com verificação de aplicativo, versão e dados válidos.
+- `src/main.ts`: limite de tamanho e erro visível; importa apenas depois de validar o arquivo.
+- `tests/collection-state.test.ts`: contratos legados e versionados, arquivos inválidos, tamanhos e coleção vazia identificada.
+- `tests/browser-smoke.test.mjs`: regressão da preservação do progresso ao importar arquivo inválido ou grande.
+- `docs/projeto/ESPECIFICACAO.md` e `docs/testes/PLANO_DE_TESTES.md`: requisitos e testes PAN-16.
+
+A funcionalidade é verificada na branch antes de mesclar. Não altera catálogo, imagens, publicação ou formato de exportação.

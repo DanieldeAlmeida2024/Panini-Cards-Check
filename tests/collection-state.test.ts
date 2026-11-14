@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { normalizeCollection } from "../src/collection-state.ts";
+import { normalizeCollection, parseCollectionImport, MAX_IMPORT_BYTES } from "../src/collection-state.ts";
 
 const allowed = new Set(["10", "11", "12"]);
 const plain = (value: unknown) => ({ ...normalizeCollection(value, allowed) });
@@ -42,4 +42,36 @@ test("PAN-14 não permite chave de protótipo nem poluição de estado", () => {
 test("PAN-04 normalização de estado persistido elimina itens removidos do álbum", () => {
   const state = JSON.parse('{"10":2,"11":"3","9999":100}');
   assert.deepEqual(plain(state), { "10": 2, "11": 3 });
+});
+
+test("PAN-16 importa backup do aplicativo e mantém compatibilidade legada", () => {
+  assert.deepEqual({ ...parseCollectionImport(
+    JSON.stringify({ app: "panini-world-cup-2026-album", version: 1,
+      collection: { "10": 2, "11": 1, "999": 5 } }), allowed,
+  ) }, { "10": 2, "11": 1 });
+  assert.deepEqual({ ...parseCollectionImport('{"10":2,"12":3}', allowed) },
+    { "10": 2, "12": 3 });
+});
+
+test("PAN-16 arquivos de outros apps, versões e formatos inválidos não são importados", () => {
+  for (const raw of [
+    '[]', 'null', '42', '{"app":"outro-app","version":1,"collection":{"10":2}}',
+    '{"app":"panini-world-cup-2026-album","version":9,"collection":{"10":1}}',
+    '{"collection":null}', '{"collection":"dados"}', '{"nada":"util"}',
+    '{"99999":1}', '{"collection":{"99999":2}}', '{}', '{',
+  ]) {
+    assert.throws(() => parseCollectionImport(raw, allowed), undefined, raw);
+  }
+});
+
+test("PAN-16 backup vazio requer identificador e versão, para evitar exclusão acidental", () => {
+  assert.deepEqual({ ...parseCollectionImport(
+    '{"app":"panini-world-cup-2026-album","version":1,"collection":{}}', allowed
+  ) }, {});
+  assert.throws(() => parseCollectionImport('{"collection":{}}', allowed));
+});
+
+test("PAN-16 importação limita bytes e protege contra arquivos grandes", () => {
+  assert.throws(() => parseCollectionImport(" ".repeat(MAX_IMPORT_BYTES + 1), allowed),
+    /512 KiB/);
 });

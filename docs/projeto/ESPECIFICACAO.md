@@ -80,3 +80,11 @@ E2E `tests/browser-smoke.test.mjs` verifica Enter/Espaço no cartão e no botão
 - O teste executa **build Vite**, não servidor de desenvolvimento: instala service worker, confirma JS/CSS no CacheStorage, desliga a rede no Chromium, recarrega a aplicação e verifica cartão e coleção preservada.
 
 **Limites:** não há sincronização entre dispositivos, evicção do navegador nem garantia de todas as imagens offline. Instalar em navegador de dispositivo real, política de atualização de SW, quotas e WebKit/Safari continuam pendentes.
+
+## Contrato de importação de coleção — PAN-16
+
+A importação aceita dois formatos: mapa legado `{"10":2}` (IDs numéricos do catálogo) e backup versionado `{"app":"panini-world-cup-2026-album","version":1,"collection":{"10":2}}`. Antes de substituir a coleção, o parser verifica o tipo dos dados, o identificador do aplicativo e a versão, quando informados.
+
+Um arquivo malformado, de outro aplicativo, sem figurinhas reconhecidas ou com mais de **512 KiB** é recusado sem alterar o progresso em `localStorage`. Para importar deliberadamente uma coleção vazia, é necessário usar o backup identificado e versionado com `collection: {}`.
+
+O diálogo apresenta o motivo da rejeição ao usuário. As regras de IDs e quantidades permanecem em `normalizeCollection` e os testes não dependem de serviço externo.
