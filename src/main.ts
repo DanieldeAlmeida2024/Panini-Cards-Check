@@ -1,5 +1,5 @@
 import "./styles.css";
-import { normalizeCollection, type CollectionState } from "./collection-state.ts";
+import { normalizeCollection, parseCollectionImport, MAX_IMPORT_BYTES, type CollectionState } from "./collection-state.ts";
 
 type Country = {
   id: number;
@@ -809,7 +809,10 @@ const init = async () => {
     if (!file) return;
 
     try {
-      const imported = normalizeCollection(JSON.parse(await file.text()), allowedStickerIds);
+      if (file.size > MAX_IMPORT_BYTES) {
+        throw new Error("O arquivo JSON ultrapassa o limite de 512 KiB.");
+      }
+      const imported = parseCollectionImport(await file.text(), allowedStickerIds);
 
       if (importMode === "replace") {
         for (const key of Object.keys(collection)) delete collection[key];
@@ -831,8 +834,8 @@ const init = async () => {
         });
 
       openCompareModal(usefulExtras);
-    } catch {
-      window.alert("Nao foi possivel ler esse JSON.");
+    } catch (error: unknown) {
+      window.alert(error instanceof Error ? error.message : "Não foi possível importar esse JSON.");
     }
   });
   searchInput.addEventListener("input", () => render(data, collection, cardImages));
