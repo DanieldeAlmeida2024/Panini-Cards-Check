@@ -166,13 +166,16 @@ test("PAN-16: importação muito grande é recusada sem remover os dados", async
   const chooserPromise = page.waitForEvent("filechooser");
   await page.locator("#replaceAlbum").click();
   const chooser = await chooserPromise;
-  await chooser.setFiles({
+  // O alerta JavaScript bloqueia a conclusão de setFiles enquanto está aberto:
+  // iniciar a seleção e aceitar o diálogo antes de aguardar o fim da seleção.
+  const selection = chooser.setFiles({
     name: "arquivo-grande.json", mimeType: "application/json",
     buffer: Buffer.from(" ".repeat(512 * 1024 + 1)),
   });
   const dialog = await dialogPromise;
   assert.match(dialog.message(), /512 KiB/);
   await dialog.accept();
+  await selection;
   const persistedState = await page.evaluate((key) =>
     JSON.parse(localStorage.getItem(key) || "{}"), STORAGE_KEY);
   assert.equal(persistedState[id], 1);
