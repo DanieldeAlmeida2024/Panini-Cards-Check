@@ -82,7 +82,10 @@ export function parseCollectionImport(
   // Coleção explicitamente vazia é permitida apenas em um backup identificado.
   const identifiedBackup = hasCollection && payload.app === "panini-world-cup-2026-album"
     && payload.version === 1;
-  if (Object.keys(imported).length === 0 && !identifiedBackup) {
+  // Um backup identificado porém não vazio que só contém IDs inválidos
+  // NÃO é backup vazio: rejeitar evita substituir a coleção atual por {}.
+  const explicitlyEmpty = identifiedBackup && Object.keys(source).length === 0;
+  if (Object.keys(imported).length === 0 && !explicitlyEmpty) {
     throw new Error("O arquivo não contém figurinhas válidas deste álbum.");
   }
   return imported;
