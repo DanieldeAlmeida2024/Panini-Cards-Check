@@ -127,3 +127,53 @@ test("PAN-15: Espaço no card alterna somente o cartão e mantém foco", async (
   await persisted(page, id, 1);
   assert.equal(await card.evaluate((el) => el === document.activeElement), true);
 });
+
+test("PAN-16: arquivo de outro app não pode apagar progresso salvo", async (t) => {
+  const page = await pageFixture(t);
+  const { card, id } = await firstSticker(page);
+  assert.ok(id);
+  await card.locator(".sticker-code").click();
+  await persisted(page, id, 1);
+
+  const dialogPromise = page.waitForEvent("dialog");
+  const chooserPromise = page.waitForEvent("filechooser");
+  await page.locator("#replaceAlbum").click();
+  const chooser = await chooserPromise;
+  await chooser.setFiles({
+    name: "arquivo-estranho.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify({
+      app: "outro-sistema", version: 1, collection: { [id]: 4 }
+    })),
+  });
+  const dialog = await dialogPromise;
+  assert.match(dialog.message(), /outro aplicativo/);
+  await dialog.accept();
+
+  const persistedState = await page.evaluate((key) =>
+    JSON.parse(localStorage.getItem(key) || "{}"), STORAGE_KEY);
+  assert.equal(persistedState[id], 1);
+});
+
+test("PAN-16: importação muito grande é recusada sem remover os dados", async (t) => {
+  const page = await pageFixture(t);
+  const { card, id } = await firstSticker(page);
+  assert.ok(id);
+  await card.locator(".sticker-code").click();
+  await persisted(page, id, 1);
+
+  const dialogPromise = page.waitForEvent("dialog");
+  const chooserPromise = page.waitForEvent("filechooser");
+  await page.locator("#replaceAlbum").click();
+  const chooser = await chooserPromise;
+  await chooser.setFiles({
+    name: "arquivo-grande.json", mimeType: "application/json",
+    buffer: Buffer.from(" ".repeat(512 * 1024 + 1)),
+  });
+  const dialog = await dialogPromise;
+  assert.match(dialog.message(), /512 KiB/);
+  await dialog.accept();
+  const persistedState = await page.evaluate((key) =>
+    JSON.parse(localStorage.getItem(key) || "{}"), STORAGE_KEY);
+  assert.equal(persistedState[id], 1);
+});
