@@ -35,3 +35,55 @@ export function normalizeCollection(
   }
   return output;
 }
+
+/** Limite do arquivo importado: o catálogo é local e não requer backups gigantes. */
+export const MAX_IMPORT_BYTES = 512 * 1024;
+
+const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
+
+/**
+ * Valida a identidade do backup antes de normalizar os itens.
+ * Um JSON de outro aplicativo ou uma coleção malformada não pode apagar o progresso.
+ * Mantém compatibilidade com o formato legado plano {id: quantidade}.
+ */
+export function parseCollectionImport(
+  rawText: string,
+  allowedStickerIds: ReadonlySet<string>,
+): CollectionState {
+  if (new TextEncoder().encode(rawText).byteLength > MAX_IMPORT_BYTES) {
+    throw new Error("O arquivo JSON ultrapassa o limite de 512 KiB.");
+  }
+  let payload: unknown;
+  try {
+    payload = JSON.parse(rawText);
+  } catch {
+    throw new Error("O arquivo selecionado não contém JSON válido.");
+  }
+  if (!isObjectRecord(payload)) {
+    throw new Error("O backup precisa conter um objeto JSON.");
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, "app") &&
+      payload.app !== "panini-world-cup-2026-album") {
+    throw new Error("O backup pertence a outro aplicativo.");
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, "version") &&
+      payload.version !== 1) {
+    throw new Error("A versão do backup não é compatível com este álbum.");
+  }
+
+  const hasCollection = Object.prototype.hasOwnProperty.call(payload, "collection");
+  const source = hasCollection ? payload.collection : payload;
+  if (!isObjectRecord(source)) {
+    throw new Error("O campo collection precisa ser um objeto.");
+  }
+
+  const imported = normalizeCollection(payload, allowedStickerIds);
+  // Coleção explicitamente vazia é permitida apenas em um backup identificado.
+  const identifiedBackup = hasCollection && payload.app === "panini-world-cup-2026-album"
+    && payload.version === 1;
+  if (Object.keys(imported).length === 0 && !identifiedBackup) {
+    throw new Error("O arquivo não contém figurinhas válidas deste álbum.");
+  }
+  return imported;
+}
