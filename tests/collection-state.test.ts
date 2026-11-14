@@ -58,7 +58,8 @@ test("PAN-16 arquivos de outros apps, versões e formatos inválidos não são i
     '[]', 'null', '42', '{"app":"outro-app","version":1,"collection":{"10":2}}',
     '{"app":"panini-world-cup-2026-album","version":9,"collection":{"10":1}}',
     '{"collection":null}', '{"collection":"dados"}', '{"nada":"util"}',
-    '{"99999":1}', '{"collection":{"99999":2}}', '{}', '{',
+    '{"99999":1}', '{"collection":{"99999":2}}', '{"app":"panini-world-cup-2026-album","version":1,"collection":{"99999":2}}',
+    '{"app":"panini-world-cup-2026-album","version":1,"collection":{"10":"nao-numero"}}', '{}', '{',
   ]) {
     assert.throws(() => parseCollectionImport(raw, allowed), undefined, raw);
   }
