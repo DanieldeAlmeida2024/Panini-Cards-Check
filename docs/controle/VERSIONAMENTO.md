@@ -100,3 +100,7 @@ O SHA do commit documental posterior deve voltar a passar no CI antes do merge.
 - `docs/projeto/ESPECIFICACAO.md` e `docs/testes/PLANO_DE_TESTES.md`: requisitos e testes PAN-16.
 
 A funcionalidade é verificada na branch antes de mesclar. Não altera catálogo, imagens, publicação ou formato de exportação.
+
+## 1.6.0 documental — fallback em HTTP 5xx (26/11/2026)
+
+O caso PAN-PWA03 cobre catálogo e navegação armazenados durante HTTP 503, resposta 404 e falta de cache. No commit `5fb5d6818b671f458c431d0199eaab3ada6c7a51`, `npm run check` passou com 13 testes, typecheck e build Vite. A rede e o cache são simulados nesses testes específicos.

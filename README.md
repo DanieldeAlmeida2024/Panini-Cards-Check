@@ -30,7 +30,7 @@ npm run check
 npm run preview
 ```
 
-O comando `check` reúne typecheck, testes de regras da coleção e build. O comando `fill:missing-info` utiliza o interpretador `python` disponível no ambiente; instale as dependências Python exigidas pelo script antes de executá-lo.
+O comando `check` reúne typecheck, testes da coleção e do service worker, e build. O comando `fill:missing-info` utiliza o interpretador `python` disponível no ambiente; instale as dependências Python exigidas pelo script antes de executá-lo.
 
 ## Qualidade e integração contínua
 
@@ -40,6 +40,8 @@ Os workflows do GitHub Actions incluem:
 - `offline-pwa.yml`: regressão de instalação/recarga offline de recursos essenciais.
 
 Os dados da coleção persistem no navegador e não são sincronizados entre dispositivos. O uso offline depende dos recursos previamente armazenados; imagens externas não têm garantia de disponibilidade sem conexão.
+
+Em uma falha de rede ou HTTP 5xx, o service worker pode reutilizar a página e os dados já armazenados. Respostas como HTTP 404 continuam sendo exibidas como erro da origem.
 
 ## Publicação e conteúdo
 

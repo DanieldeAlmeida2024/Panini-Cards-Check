@@ -76,7 +76,7 @@ E2E `tests/browser-smoke.test.mjs` verifica Enter/Espaço no cartão e no botão
 
 - Durante `install`, o worker busca HTML da raiz, identifica assets `/assets/*.js` e `/assets/*.css` gerados pelo Vite e pré-carrega ambos juntamente com o catálogo JSON, manifest e ícones. Se o bundle JS não existir ou `cache.addAll` falhar, a instalação rejeita, preservando o worker anterior.
 - Cache `panini-album-check-2026-v2`: remove na ativação **somente** versões prefixadas do próprio álbum; não apaga caches de outras aplicações do mesmo domínio.
-- Navegação, dados e manifesto JSON usam rede primeiro, com fallback local em falha; bundles e imagens locais cacheados podem ser reutilizados. **Recursos externos** (como flags CDN) não são interceptados e podem não aparecer offline. O álbum e seu progresso em `localStorage` continuam utilizáveis.
+- Navegação, dados e manifesto JSON consultam a rede primeiro. Falhas de rede e HTTP 5xx usam a cópia disponível no cache. HTTP 4xx conserva a resposta da origem. Bundles e imagens locais já armazenados podem ser reutilizados. **Recursos externos** (como flags CDN) não são interceptados e podem não aparecer offline. O álbum e seu progresso em `localStorage` continuam utilizáveis quando seus recursos essenciais foram armazenados.
 - O teste executa **build Vite**, não servidor de desenvolvimento: instala service worker, confirma JS/CSS no CacheStorage, desliga a rede no Chromium, recarrega a aplicação e verifica cartão e coleção preservada.
 
 **Limites:** não há sincronização entre dispositivos, evicção do navegador nem garantia de todas as imagens offline. Instalar em navegador de dispositivo real, política de atualização de SW, quotas e WebKit/Safari continuam pendentes.
