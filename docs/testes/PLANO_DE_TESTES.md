@@ -92,6 +92,8 @@ Os sete testes `tests/collection-state.test.ts` executam as **regras puras** sem
 
 ## PAN-PWA01/02 — testes E2E reais de primeiro uso offline
 
+**PAN-PWA03** em `tests/service-worker.test.mjs` executa o manipulador real de requisições com rede e cache simulados. HTTP 503 deve recuperar o catálogo ou a página inicial já armazenados. HTTP 404 continua sendo retornado. Sem cópia no cache, o serviço conserva o HTTP 503 da origem. O cenário integra `npm run test:unit`.
+
 | ID | Prova automatizada | Resultado inicial |
 |---|---|---|
 | PAN-PWA01 | Vite build → Chromium controlado por SW → JS/CSS e JSON em CacheStorage → desligar rede → reload renderiza álbum e figura selecionada | Aguardando CI |
