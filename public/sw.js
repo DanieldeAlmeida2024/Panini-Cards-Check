@@ -70,19 +70,21 @@ self.addEventListener('fetch', (event) => {
     const cached = await cache.match(request);
     if (!networkFirst && cached) return cached;
 
+    let response;
     try {
-      const response = await fetch(request);
+      response = await fetch(request);
       if (response.ok && response.type === 'basic') {
         await cache.put(request, response.clone());
       }
-      return response;
+      if (!networkFirst || response.status < 500) return response;
     } catch {
-      if (cached) return cached;
-      if (navigation) {
-        const root = await cache.match('/');
-        if (root) return root;
-      }
-      return new Response('Recurso indisponível offline', { status: 503 });
+      response = undefined;
     }
+    if (cached) return cached;
+    if (navigation) {
+      const root = await cache.match('/');
+      if (root) return root;
+    }
+    return response ?? new Response('Recurso indisponível offline', { status: 503 });
   })());
 });
